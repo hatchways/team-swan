@@ -17,7 +17,6 @@ const useStyles = makeStyles({
 });
 
 const Login = () => {
-  console.log(process.env.REACT_APP_CLIENT_ID);
   const { container, buttonContainer } = useStyles();
   const { showErrorSnackbar } = useSnackbar();
 
