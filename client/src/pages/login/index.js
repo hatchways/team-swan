@@ -1,6 +1,5 @@
 import React from "react";
 import { Paper, Typography, makeStyles, Grid } from "@material-ui/core";
-import { GoogleLogin } from "react-google-login";
 import GoogleButton from "./GoogleButton";
 import useSnackbar from "../../common/useSnackbar";
 
@@ -41,16 +40,7 @@ const Login = () => {
         alignItems="center"
         justify="center"
       >
-        <GoogleLogin
-          clientId={process.env.REACT_APP_CLIENT_ID}
-          onSuccess={googleSuccessResponse}
-          onFailure={googleFailureResponse}
-          responseType="code"
-          accessType="offline"
-          render={(props) => (
-            <GoogleButton onClick={props.onClick} disabled={props.disabled} />
-          )}
-        />
+        <GoogleButton onClick={props.onClick} disabled={props.disabled} />
       </Grid>
     </Paper>
   );
