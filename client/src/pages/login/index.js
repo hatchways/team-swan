@@ -23,12 +23,10 @@ const Login = () => {
   const { showErrorSnackbar } = useSnackbar();
 
   const googleSuccessResponse = (response) => {
-    //TODO (sending the authorization code to backend to get the tokens)
+    //TODO (sending the authorization code to backend to get access token)
   };
 
   const googleFailureResponse = (response) => {
-    console.log("ERROR");
-    console.log(response);
     showErrorSnackbar("An error occured while logging in");
   };
 
