@@ -21,14 +21,6 @@ const Login = () => {
   const { container, buttonContainer } = useStyles();
   const { showErrorSnackbar } = useSnackbar();
 
-  const googleSuccessResponse = (response) => {
-    //TODO (sending the authorization code to backend to get access token)
-  };
-
-  const googleFailureResponse = (response) => {
-    showErrorSnackbar("An error occured while logging in");
-  };
-
   return (
     <Paper className={container} elevation={3}>
       <Typography variant="h4" display="block" align="center">
@@ -40,7 +32,7 @@ const Login = () => {
         alignItems="center"
         justify="center"
       >
-        <GoogleButton onClick={props.onClick} disabled={props.disabled} />
+        <GoogleButton />
       </Grid>
     </Paper>
   );
