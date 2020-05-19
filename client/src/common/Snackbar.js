@@ -2,16 +2,17 @@ import React from "react";
 import {
   Typography,
   Grid,
-  Snackbar,
+  Snackbar as MaterialUISnackbar,
   SnackbarContent,
   makeStyles
 } from "@material-ui/core";
-import { Error } from "@material-ui/icons";
+import { Error, Check } from "@material-ui/icons";
 
 //CSS styles
 const useStyles = makeStyles({
   snackbarContentError: {
-    backgroundColor: "#cc3300",
+    backgroundColor: (props) =>
+      props.type === "error" ? "#cc3300" : "#3eb485",
     height: "5rem"
   },
   icon: {
@@ -19,11 +20,12 @@ const useStyles = makeStyles({
   }
 });
 
-const ErrorSnackbar = ({ open, onClose, message }) => {
-  const { snackbarContentError, icon } = useStyles();
+const Snackbar = ({ open, onClose, message, type }) => {
+  const { snackbarContentError, icon } = useStyles({ type });
 
   return (
-    <Snackbar
+    <MaterialUISnackbar
+      key={message + type}
       open={open}
       autoHideDuration={2000}
       anchorOrigin={{
@@ -36,13 +38,17 @@ const ErrorSnackbar = ({ open, onClose, message }) => {
         className={snackbarContentError}
         message={
           <Grid container>
-            <Error className={icon} />
+            {type === "error" ? (
+              <Error className={icon} />
+            ) : (
+              <Check className={icon} />
+            )}
             <Typography>{message}</Typography>
           </Grid>
         }
       />
-    </Snackbar>
+    </MaterialUISnackbar>
   );
 };
 
-export default ErrorSnackbar;
+export default Snackbar;

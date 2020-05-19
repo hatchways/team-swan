@@ -3,24 +3,17 @@ import { SnackbarContext } from "./SnackbarProvider";
 
 //Hook for using the snackbar
 const useSnackbar = () => {
-  const {
-    setErrorMessage,
-    setIsErrorSnackbarOpen,
-    setSuccessMessage,
-    setIsSuccessSnackbarOpen
-  } = useContext(SnackbarContext);
+  const { setMessage, setIsSnackbarOpen, setSnackbarType } = useContext(
+    SnackbarContext
+  );
 
-  const showErrorSnackbar = (message) => {
-    setErrorMessage(message);
-    setIsErrorSnackbarOpen(true);
+  const showSnackbar = (message, type) => {
+    setSnackbarType(type);
+    setMessage(message);
+    setIsSnackbarOpen(true);
   };
 
-  const showSuccessSnackbar = (message) => {
-    setSuccessMessage(message);
-    setIsSuccessSnackbarOpen(true);
-  };
-
-  return { showErrorSnackbar, showSuccessSnackbar };
+  return showSnackbar;
 };
 
 export default useSnackbar;

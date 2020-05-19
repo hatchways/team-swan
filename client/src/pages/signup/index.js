@@ -15,7 +15,7 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState(null);
   const [confirmPasswordError, setConfirmPasswordError] = useState(null);
 
-  const { showErrorSnackbar } = useSnackbar();
+  const showSnackbar = useSnackbar();
 
   //Validate the name every change
   useEffect(() => {

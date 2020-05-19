@@ -9,7 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
 
-  const { showErrorSnackbar } = useSnackbar();
+  const showSnackbar = useSnackbar();
 
   //Validate the email every change
   useEffect(() => {
@@ -56,31 +56,31 @@ const Login = () => {
       //TODO submit the form
     } else {
       //Display all errors
-      setEmailError(emailErrorMessage);
-      setPasswordError(passwordErrorMessage);
     }
   };
 
   return (
-    <LoginForm
-      fields={[
-        {
-          value: email,
-          errorMessage: emailError,
-          onChange: setEmail,
-          label: "Email",
-          type: "text"
-        },
-        {
-          value: password,
-          errorMessage: passwordError,
-          onChange: setPassword,
-          label: "Password",
-          type: "password"
-        }
-      ]}
-      login={login}
-    />
+    <>
+      <LoginForm
+        fields={[
+          {
+            value: email,
+            errorMessage: emailError,
+            onChange: setEmail,
+            label: "Email",
+            type: "text"
+          },
+          {
+            value: password,
+            errorMessage: passwordError,
+            onChange: setPassword,
+            label: "Password",
+            type: "password"
+          }
+        ]}
+        login={login}
+      />
+    </>
   );
 };
 

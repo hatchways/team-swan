@@ -1,53 +1,28 @@
-import React, { useState, useEffect, createContext } from "react";
-import ErrorSnackBar from "./ErrorSnackbar";
-import SuccessSnackBar from "./SuccessSnackbar";
+import React, { useState, createContext } from "react";
+import SnackBar from "./Snackbar";
 
 export const SnackbarContext = createContext();
 
 const SnackbarProvider = ({ children }) => {
-  //Snackbar Error State
-  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  //Snackbar Success State
-  const [isSuccessSnackbarOpen, setIsSuccessSnackbarOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-
-  //Close success snackbar if error snack bar opens
-  useEffect(() => {
-    if (isErrorSnackbarOpen) {
-      setIsSuccessSnackbarOpen(false);
-    }
-  }, [isErrorSnackbarOpen]);
-
-  //Close error snackbar if success snack bar opens
-  useEffect(() => {
-    if (isSuccessSnackbarOpen) {
-      setIsErrorSnackbarOpen(false);
-    }
-  }, [isSuccessSnackbarOpen]);
+  //Snackbar State
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("error");
 
   return (
     <SnackbarContext.Provider
       value={{
-        setErrorMessage,
-        setIsErrorSnackbarOpen,
-        setSuccessMessage,
-        setIsSuccessSnackbarOpen
+        setMessage,
+        setIsSnackbarOpen,
+        setSnackbarType
       }}
     >
-      <ErrorSnackBar
-        message={errorMessage}
-        open={isErrorSnackbarOpen}
+      <SnackBar
+        type={snackbarType}
+        message={message}
+        open={isSnackbarOpen}
         onClose={() => {
-          setIsErrorSnackbarOpen(false);
-        }}
-      />
-      <SuccessSnackBar
-        message={successMessage}
-        open={isSuccessSnackbarOpen}
-        onClose={() => {
-          setIsSuccessSnackbarOpen(false);
+          setIsSnackbarOpen(false);
         }}
       />
       {children}
