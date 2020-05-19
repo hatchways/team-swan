@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { Typography, Link } from "@material-ui/core";
 import useSnackbar from "common/useSnackbar";
-import LoginForm from "./LoginForm";
+import InitialPageForm from "common/InitialPageForm";
 
 const Login = () => {
   const [email, setEmail] = useState(null);
@@ -56,29 +58,43 @@ const Login = () => {
       //TODO submit the form
     } else {
       //Display all errors
+      setEmailError(emailErrorMessage);
+      setPasswordError(passwordErrorMessage);
     }
   };
 
   return (
     <>
-      <LoginForm
+      <InitialPageForm
         fields={[
           {
             value: email,
             errorMessage: emailError,
             onChange: setEmail,
             label: "Email",
-            type: "text"
+            type: "text",
+            size: "medium"
           },
           {
             value: password,
             errorMessage: passwordError,
             onChange: setPassword,
             label: "Password",
-            type: "password"
+            type: "password",
+            size: "medium"
           }
         ]}
-        login={login}
+        title="Login"
+        onSubmit={login}
+        submitButtonName="Login"
+        footer={
+          <Typography variant="body2">
+            Don't have an account?{" "}
+            <Link href="#" component={RouterLink} to="/">
+              Sign up
+            </Link>
+          </Typography>
+        }
       />
     </>
   );

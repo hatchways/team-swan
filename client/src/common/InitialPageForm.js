@@ -4,47 +4,52 @@ import {
   Paper,
   Typography,
   makeStyles,
-  Button,
-  Link
+  Button
 } from "@material-ui/core";
-import { Link as RouterLink } from "react-router-dom";
 
 //CSS styles
 const useStyles = makeStyles({
   container: {
     width: "490px",
-    height: "400px",
     margin: "40px auto 0 auto",
     padding: "2rem 4rem 2rem 4rem",
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
   },
-  title: {
+  formTitle: {
     marginBottom: "20px"
-  },
-  buttonContainer: {
-    flexGrow: 1
   },
   button: {
     width: "10rem",
-    margin: "1rem"
+    margin: "1rem 0 2rem 0"
   },
   textField: {
     marginTop: "10px"
   }
 });
 
-const LoginForm = ({ fields, login }) => {
-  const { container, button, buttonContainer, textField, title } = useStyles();
+const InitialPageForm = ({
+  title,
+  fields,
+  onSubmit,
+  submitButtonName,
+  footer
+}) => {
+  const { container, button, textField, formTitle } = useStyles();
 
   return (
     <Paper className={container} elevation={3} spacing={2}>
-      <Typography className={title} variant="h4" display="block" align="center">
-        Login
+      <Typography
+        className={formTitle}
+        variant="h4"
+        display="block"
+        align="center"
+      >
+        {title}
       </Typography>
 
-      {fields.map(({ value, errorMessage, onChange, label, type }) => (
+      {fields.map(({ value, errorMessage, onChange, label, type, size }) => (
         <TextField
           fullWidth
           variant="outlined"
@@ -56,29 +61,23 @@ const LoginForm = ({ fields, login }) => {
           value={value || ""}
           type={type}
           onChange={(e) => onChange(e.target.value)}
+          size={size}
         />
       ))}
 
-      <div className={buttonContainer}>
-        <Button
-          onClick={login}
-          className={button}
-          variant="contained"
-          color="primary"
-          size="large"
-        >
-          Login
-        </Button>
-      </div>
+      <Button
+        onClick={onSubmit}
+        className={button}
+        variant="contained"
+        color="primary"
+        size="large"
+      >
+        {submitButtonName}
+      </Button>
 
-      <Typography variant="body2">
-        Don't have an account?{" "}
-        <Link href="#" component={RouterLink} to="/">
-          Sign up
-        </Link>
-      </Typography>
+      {footer}
     </Paper>
   );
 };
 
-export default LoginForm;
+export default InitialPageForm;

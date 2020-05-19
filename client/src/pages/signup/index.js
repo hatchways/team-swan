@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { Typography, Link } from "@material-ui/core";
 import useSnackbar from "common/useSnackbar";
-import SignupForm from "./SignupForm";
+import InitialPageFrom from "common/InitialPageForm";
 
 const Signup = () => {
   const [name, setName] = useState(null);
@@ -41,7 +43,7 @@ const Signup = () => {
     }
 
     //Check null initial value to avoid showing errors on first render
-    if (confirmPasswordError !== null) {
+    if (confirmPassword !== null) {
       setConfirmPasswordError(validateConfirmPassword());
     }
   }, [password, confirmPassword]);
@@ -112,38 +114,52 @@ const Signup = () => {
   };
 
   return (
-    <SignupForm
+    <InitialPageFrom
       fields={[
         {
           value: name,
           errorMessage: nameError,
           onChange: setName,
           label: "Name",
-          type: "text"
+          type: "text",
+          size: "small"
         },
         {
           value: email,
           errorMessage: emailError,
           onChange: setEmail,
           label: "Email",
-          type: "text"
+          type: "text",
+          size: "small"
         },
         {
           value: password,
           errorMessage: passwordError,
           onChange: setPassword,
           label: "Password",
-          type: "password"
+          type: "password",
+          size: "small"
         },
         {
           value: confirmPassword,
           errorMessage: confirmPasswordError,
           onChange: setConfirmPassword,
           label: "Confirm Password",
-          type: "password"
+          type: "password",
+          size: "small"
         }
       ]}
-      signup={signup}
+      title="Sign up"
+      onSubmit={signup}
+      submitButtonName="Sign up"
+      footer={
+        <Typography variant="body2">
+          Already have an account?{" "}
+          <Link href="#" component={RouterLink} to="/login">
+            Sign in
+          </Link>
+        </Typography>
+      }
     />
   );
 };
