@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
     }
  }, {
   sequelize,
-  modelName: 'Course'
+  modelName: 'User'
  });
   User.associate = function(models) {
     // associations can be defined here
