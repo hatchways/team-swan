@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import useSnackbar from "../../common/useSnackbar";
+import useSnackbar from "common/useSnackbar";
 import LoginForm from "./LoginForm";
 
 const Login = () => {
