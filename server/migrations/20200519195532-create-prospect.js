@@ -9,10 +9,23 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       email: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING,
+        validate: {
+          notEmpty: {
+            msg: '"Email" is required'
+          }
+        }
       },
       status: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING,
+        validate: {
+          isIn: {
+            args: [['open', 'responded', 'unsubscribed']],
+            msg: "Invalid status type"
+          }
+        }
       },
       firstName: {
         type: Sequelize.STRING
@@ -21,7 +34,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       userId: {
-        type: Sequelize.INTEGER
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        validate: {
+          notEmpty: {
+            msg: '"User Id" is required'
+          }
+        }
       },
       createdAt: {
         allowNull: false,
