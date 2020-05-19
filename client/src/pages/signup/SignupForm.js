@@ -44,7 +44,7 @@ const SignupForm = ({ fields, signup }) => {
         Sign up
       </Typography>
 
-      {fields.map(({ value, error, onChange, label, type }) => (
+      {fields.map(({ value, errorMessage, onChange, label, type }) => (
         <TextField
           fullWidth
           variant="outlined"
@@ -52,8 +52,8 @@ const SignupForm = ({ fields, signup }) => {
           key={label}
           placeholder={label}
           className={textField}
-          error={error}
-          helperText={error}
+          error={errorMessage ? true : false}
+          helperText={errorMessage}
           value={value || ""}
           type={type}
           onChange={(e) => onChange(e.target.value)}

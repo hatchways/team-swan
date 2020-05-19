@@ -21,7 +21,7 @@ const Signup = () => {
   useEffect(() => {
     //Check null initial value to avoid showing errors on first render
     if (name !== null) {
-      validateName();
+      setNameError(validateName());
     }
   }, [name]);
 
@@ -29,42 +29,31 @@ const Signup = () => {
   useEffect(() => {
     //Check null initial value to avoid showing errors on first render
     if (email !== null) {
-      validateEmail();
+      setEmailError(validateEmail());
     }
   }, [email]);
-
-  //Validate the password every change
-  useEffect(() => {
-    //Check null initial value to avoid showing errors on first render
-    if (password !== null) {
-      validatePassword();
-    }
-  }, [password]);
 
   //Validate the password and confirm password every change
   useEffect(() => {
     //Check null initial value to avoid showing errors on first render
     if (password !== null) {
-      validatePassword();
+      setPasswordError(validatePassword());
     }
 
     //Check null initial value to avoid showing errors on first render
-    if (password !== null) {
-      validateConfirmPassword();
+    if (confirmPasswordError !== null) {
+      setConfirmPasswordError(validateConfirmPassword());
     }
   }, [password, confirmPassword]);
 
   //Name Validation
   const validateName = () => {
     if (!name) {
-      setNameError("Name is required");
-      return false;
+      return "Name is required";
     } else if (name.length > 30) {
-      setNameError("Name must not exceed 30 characters");
-      return false;
+      return "Name must not exceed 30 characters";
     } else {
-      setNameError(null);
-      return true;
+      return null;
     }
   };
 
@@ -72,51 +61,53 @@ const Signup = () => {
   const validateEmail = () => {
     let emailRegex = new RegExp(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
     if (!email) {
-      setEmailError("Email is required");
-      return false;
+      return "Email is required";
     } else if (!emailRegex.test(email)) {
-      setEmailError("Invalid Email");
-      return false;
+      return "Invalid Email";
     } else {
-      setEmailError(null);
-      return true;
+      return null;
     }
   };
 
   //Password Validation
   const validatePassword = () => {
     if (!password) {
-      setPasswordError("Password is required");
-      return false;
+      return "Password is required";
     } else if (password.length < 6) {
-      setPasswordError("Password must have at least 6 characters");
-      return false;
+      return "Password must have at least 6 characters";
     } else {
-      setPasswordError(null);
-      return true;
+      return null;
     }
   };
 
   //Confirm Password Validation
   const validateConfirmPassword = () => {
     if (confirmPassword !== password) {
-      setConfirmPasswordError("Passwords do not match");
-      return false;
+      return "Passwords do not match";
     } else {
-      setConfirmPasswordError(null);
-      return true;
+      return null;
     }
   };
 
   //Submit form
   const signup = () => {
+    let nameErrorMessage = validateName();
+    let emailErrorMessage = validateEmail();
+    let passwordErrorMessage = validatePassword();
+    let confirmPasswordErrorMessage = validateConfirmPassword();
     if (
-      validateName() &&
-      validateEmail() &&
-      validatePassword() &&
-      validateConfirmPassword()
+      !nameErrorMessage &&
+      !emailErrorMessage &&
+      !passwordErrorMessage &&
+      !confirmPasswordErrorMessage
     ) {
       //TODO submit the form
+    } else {
+      //Display all errors
+      setNameError(nameErrorMessage);
+      setEmailError(emailErrorMessage);
+      setPasswordError(passwordErrorMessage);
+      setConfirmPasswordError(confirmPasswordErrorMessage);
     }
   };
 
@@ -125,28 +116,28 @@ const Signup = () => {
       fields={[
         {
           value: name,
-          error: nameError,
+          errorMessage: nameError,
           onChange: setName,
           label: "Name",
           type: "text"
         },
         {
           value: email,
-          error: emailError,
+          errorMessage: emailError,
           onChange: setEmail,
           label: "Email",
           type: "text"
         },
         {
           value: password,
-          error: passwordError,
+          errorMessage: passwordError,
           onChange: setPassword,
           label: "Password",
           type: "password"
         },
         {
           value: confirmPassword,
-          error: confirmPasswordError,
+          errorMessage: confirmPasswordError,
           onChange: setConfirmPassword,
           label: "Confirm Password",
           type: "password"
