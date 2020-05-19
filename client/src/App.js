@@ -1,13 +1,16 @@
 import React from "react";
 import MainLayout from "./pages/mainlayout";
-import LandingPage from "./pages/Landing";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import Login from "./pages/login";
+import Signup from "./pages/signup";
 
 function App() {
   return (
     <MainLayout>
-      <Route path="/" component={Login} />
+      <Switch>
+        <Route path="/login" component={Login} />
+        <Route path="/" component={Signup} />
+      </Switch>
     </MainLayout>
   );
 }

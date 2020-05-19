@@ -18,7 +18,7 @@ export const theme = createMuiTheme({
   },
   palette: {
     // Main app colors
-    primary: { main: "#3eb485" },
+    primary: { main: "#4fbe75" },
     secondary: { main: "#FFFFFF" },
     contrastThreshold: 2,
     background: {
@@ -44,13 +44,17 @@ export const theme = createMuiTheme({
       },
       outlinedPrimary: {
         color: "#000000"
+      },
+      containedPrimary: {
+        background:
+          "linear-gradient(99deg, rgba(42,168,151,1) 10%, rgba(79,190,117,1) 100%)"
       }
     },
     MuiAppBar: {
       //App bar overrides
       root: {
         borderBottom: "1px solid #E0E0E0",
-        padding: "0.5rem 0 0.5rem 0"
+        padding: "1rem 0 1rem 0"
       }
     }
   }

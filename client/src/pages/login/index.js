@@ -1,39 +1,86 @@
-import React from "react";
-import { Paper, Typography, makeStyles, Grid } from "@material-ui/core";
-import GoogleButton from "./GoogleButton";
+import React, { useState, useEffect } from "react";
 import useSnackbar from "../../common/useSnackbar";
-
-const useStyles = makeStyles({
-  container: {
-    width: "380px",
-    height: "280px",
-    margin: "60px auto 0 auto",
-    padding: "3rem"
-  },
-  buttonContainer: {
-    height: "100%",
-    width: "100%"
-  }
-});
+import LoginForm from "./LoginForm";
 
 const Login = () => {
-  const { container, buttonContainer } = useStyles();
+  const [email, setEmail] = useState(null);
+  const [emailError, setEmailError] = useState(null);
+
+  const [password, setPassword] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
+
+  //Utility hooks
   const { showErrorSnackbar } = useSnackbar();
 
+  //Validate the email every change
+  useEffect(() => {
+    //Check null initial value to avoid showing errors on first render
+    if (email !== null) {
+      validateEmail();
+    }
+  }, [email]);
+
+  //Validate the password every change
+  useEffect(() => {
+    //Check null initial value to avoid showing errors on first render
+    if (password !== null) {
+      validatePassword();
+    }
+  }, [password]);
+
+  //Email Validation
+  const validateEmail = () => {
+    let emailRegex = new RegExp(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
+    if (!email) {
+      setEmailError("Email is required");
+      return false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError("Invalid Email");
+      return false;
+    } else {
+      setEmailError(null);
+      return true;
+    }
+  };
+
+  //Password Validation
+  const validatePassword = () => {
+    if (!password) {
+      setPasswordError("Password is required");
+      return false;
+    } else {
+      setPasswordError(null);
+      return true;
+    }
+  };
+
+  //Submit form
+  const login = () => {
+    if (validateEmail() && validatePassword()) {
+      //TODO submit the form
+    }
+  };
+
   return (
-    <Paper className={container} elevation={3}>
-      <Typography variant="h4" display="block" align="center">
-        Login
-      </Typography>
-      <Grid
-        className={buttonContainer}
-        container
-        alignItems="center"
-        justify="center"
-      >
-        <GoogleButton />
-      </Grid>
-    </Paper>
+    <LoginForm
+      fields={[
+        {
+          value: email,
+          error: emailError,
+          onChange: setEmail,
+          label: "Email",
+          type: "text"
+        },
+        {
+          value: password,
+          error: passwordError,
+          onChange: setPassword,
+          label: "Password",
+          type: "password"
+        }
+      ]}
+      login={login}
+    />
   );
 };
 
