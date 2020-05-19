@@ -1,29 +1,8 @@
 import React, { useState, useEffect, createContext } from "react";
-import {
-  Typography,
-  Grid,
-  Snackbar,
-  SnackbarContent,
-  makeStyles
-} from "@material-ui/core";
-import { Error, Check } from "@material-ui/icons";
+import ErrorSnackBar from "./ErrorSnackbar";
+import SuccessSnackBar from "./SuccessSnackbar";
 
 export const SnackbarContext = createContext();
-
-//Make styles hooks
-const useStyles = makeStyles({
-  snackbarContentError: {
-    backgroundColor: "#cc3300",
-    height: "5rem"
-  },
-  snackbarContentSuccess: {
-    backgroundColor: "#3eb485",
-    height: "5rem"
-  },
-  icon: {
-    marginRight: "10px"
-  }
-});
 
 const SnackbarProvider = ({ children }) => {
   //Snackbar Error State
@@ -48,58 +27,6 @@ const SnackbarProvider = ({ children }) => {
     }
   }, [isSuccessSnackbarOpen]);
 
-  //Styles from makeStyles function
-  const { snackbarContentError, snackbarContentSuccess, icon } = useStyles();
-
-  //Snackbars
-  const ErrorSnackBar = (
-    <Snackbar
-      open={isErrorSnackbarOpen}
-      autoHideDuration={2000}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "left"
-      }}
-      onClose={() => {
-        setIsErrorSnackbarOpen(false);
-      }}
-    >
-      <SnackbarContent
-        className={snackbarContentError}
-        message={
-          <Grid container>
-            <Error className={icon} />
-            <Typography>{errorMessage}</Typography>
-          </Grid>
-        }
-      />
-    </Snackbar>
-  );
-
-  const SuccessSnackBar = (
-    <Snackbar
-      open={isSuccessSnackbarOpen}
-      autoHideDuration={2000}
-      onClose={() => {
-        setIsErrorSnackbarOpen(false);
-      }}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "left"
-      }}
-    >
-      <SnackbarContent
-        className={snackbarContentSuccess}
-        message={
-          <Grid container>
-            <Error className={icon} />
-            <Typography>{successMessage}</Typography>
-          </Grid>
-        }
-      />
-    </Snackbar>
-  );
-
   return (
     <SnackbarContext.Provider
       value={{
@@ -109,8 +36,20 @@ const SnackbarProvider = ({ children }) => {
         setIsSuccessSnackbarOpen
       }}
     >
-      {ErrorSnackBar}
-      {SuccessSnackBar}
+      <ErrorSnackBar
+        message={errorMessage}
+        open={isErrorSnackbarOpen}
+        onClose={() => {
+          setIsErrorSnackbarOpen(false);
+        }}
+      />
+      <SuccessSnackBar
+        message={successMessage}
+        open={isSuccessSnackbarOpen}
+        onClose={() => {
+          setIsSuccessSnackbarOpen(false);
+        }}
+      />
       {children}
     </SnackbarContext.Provider>
   );
