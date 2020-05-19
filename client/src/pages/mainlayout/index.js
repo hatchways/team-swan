@@ -1,6 +1,6 @@
 import React from "react";
-import { MuiThemeProvider, CssBaseline, Button } from "@material-ui/core";
-import { BrowserRouter, Route } from "react-router-dom";
+import { MuiThemeProvider, CssBaseline } from "@material-ui/core";
+import { BrowserRouter } from "react-router-dom";
 import { theme } from "../../themes/theme";
 import Navbar from "./Navbar";
 import SnackbarProvider from "../../common/SnackbarProvider";
