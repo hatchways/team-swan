@@ -53,8 +53,7 @@ export const theme = createMuiTheme({
     MuiAppBar: {
       //App bar overrides
       root: {
-        borderBottom: "1px solid #E0E0E0",
-        padding: "1rem 0 1rem 0"
+        borderBottom: "1px solid #E0E0E0"
       }
     }
   }
