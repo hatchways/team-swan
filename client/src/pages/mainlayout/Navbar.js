@@ -24,8 +24,12 @@ const Navbar = ({ isAuthenticated, user, logout }) => {
         <div className={imageContainer}>
           <img src={logo} width="130" />
         </div>
-        <Navlinks />
-        <UserInfo />
+        {isAuthenticated && (
+          <>
+            <Navlinks />
+            <UserInfo user={user} logout={logout} />
+          </>
+        )}
       </Toolbar>
     </AppBar>
   );

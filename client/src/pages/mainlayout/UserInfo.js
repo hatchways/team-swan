@@ -33,7 +33,7 @@ const UserInfo = ({ user, logout }) => {
 
   return (
     <div className={container}>
-      <Avatar src={profilepic} className={avatar} />
+      <Avatar src={user.image || profilepic} className={avatar} />
       <Button
         className={button}
         color="inherit"
