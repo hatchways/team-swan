@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Typography, Link } from "@material-ui/core";
 import useSnackbar from "common/useSnackbar";
-import InitialPageForm from "common/InitialPageForm";
+import PaperForm from "common/PaperForm";
 
 const Login = () => {
   const [email, setEmail] = useState(null);
@@ -65,7 +65,7 @@ const Login = () => {
 
   return (
     <>
-      <InitialPageForm
+      <PaperForm
         fields={[
           {
             value: email,

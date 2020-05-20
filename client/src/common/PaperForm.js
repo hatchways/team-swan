@@ -29,13 +29,7 @@ const useStyles = makeStyles({
   }
 });
 
-const InitialPageForm = ({
-  title,
-  fields,
-  onSubmit,
-  submitButtonName,
-  footer
-}) => {
+const PaperForm = ({ title, fields, onSubmit, submitButtonName, footer }) => {
   const { container, button, textField, formTitle } = useStyles();
 
   return (
@@ -80,4 +74,4 @@ const InitialPageForm = ({
   );
 };
 
-export default InitialPageForm;
+export default PaperForm;
