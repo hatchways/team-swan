@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
+const DataBaseConnectionError = require("../../src/errors/database-connection-error");
 
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
@@ -37,6 +38,7 @@ try {
   console.log("Connection to the database successful");
 } catch (err) {
   console.log(err);
+  throw new DataBaseConnectionError();
 }
 // DB connection
 db.sequelize = sequelize;

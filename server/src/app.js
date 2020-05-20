@@ -5,14 +5,9 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 require("express-async-errors");
 const errorHandler = require("./middleware/error-handler");
-const cookiesession = require("cookie-session");
+const cookieSession = require("cookie-session");
 
-const indexRouter = require("./routes/index");
-const pingRouter = require("./routes/ping");
-const signupRouter = require("./routes/signup");
-const signinRouter = require("./routes/signin");
-const currentUserRouter = require("./routes/current-user");
-const signOutRouter = require("./routes/signout");
+const userAuthRoute = require("./routes/user-auth");
 
 const { json, urlencoded } = express;
 
@@ -23,19 +18,15 @@ app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
-  cookiesession({
+  cookieSession({
     signed: false,
     secure: false,
   })
 );
 app.use(express.static(join(__dirname, "public")));
 
-app.use("/", indexRouter);
-app.use("/ping", pingRouter);
-app.use(signupRouter);
-app.use(signinRouter);
-app.use(currentUserRouter);
-app.use(signOutRouter);
+// User routes
+app.use(userAuthRoute);
 app.use(errorHandler);
 
 // catch 404 and forward to error handler
@@ -51,7 +42,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.json({ error: err });
+  res.json({ error: [err] });
 });
 
 module.exports = app;
