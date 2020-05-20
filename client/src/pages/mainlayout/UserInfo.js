@@ -27,7 +27,7 @@ const useStyles = makeStyles({
   }
 });
 
-const UserInfo = ({ isAuthenticated, user, logout }) => {
+const UserInfo = ({ user, logout }) => {
   const [menuAnchorElement, setMenuAnchorElement] = useState(null);
   const { container, avatar, button, icon, menu } = useStyles();
 
@@ -41,7 +41,7 @@ const UserInfo = ({ isAuthenticated, user, logout }) => {
         onClick={(e) => setMenuAnchorElement(e.currentTarget)}
         endIcon={<ArrowDropDown className={icon} />}
       >
-        John Doe
+        {user.name}
       </Button>
 
       <Menu
@@ -58,7 +58,7 @@ const UserInfo = ({ isAuthenticated, user, logout }) => {
         onClose={() => setMenuAnchorElement(null)}
       >
         <MenuItem>Edit Profile</MenuItem>
-        <MenuItem>Logout</MenuItem>
+        <MenuItem onClick={logout}>Logout</MenuItem>
       </Menu>
     </div>
   );

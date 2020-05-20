@@ -4,20 +4,18 @@ import { Redirect } from "react-router";
 
 const withAuth = (Component, shouldRedirectToLogin = true) => {
   const HighOrderComponent = (props) => {
-    const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(
-      AuthContext
-    );
+    const {
+      isAuthenticated,
+      setIsAuthenticated,
+      user,
+      setUser,
+      logout
+    } = useContext(AuthContext);
 
     useEffect(() => {
       //Fetch get user info
       //401 logs out
     }, []);
-
-    const logout = () => {
-      //TODO
-      //Route logout
-      //setAuthentication to false adn set user to empty values
-    };
 
     if (isAuthenticated || !shouldRedirectToLogin) {
       return (

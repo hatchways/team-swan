@@ -10,9 +10,16 @@ const AuthProvider = ({ children }) => {
     image: ""
   });
 
+  const logout = () => {
+    //TODO
+    //Route logout
+    //setAuthentication to false adn set user to empty values
+    setIsAuthenticated(false);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, setIsAuthenticated, user, setUser }}
+      value={{ isAuthenticated, setIsAuthenticated, user, setUser, logout }}
     >
       {children}
     </AuthContext.Provider>

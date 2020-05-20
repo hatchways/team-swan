@@ -22,7 +22,7 @@ const Navlinks = () => {
   const location = useLocation();
 
   const links = [
-    { label: "Campaigns", to: "/campaign" },
+    { label: "Campaigns", to: "/campaigns" },
     { label: "Prospects", to: "/prospects" },
     { label: "Templates", to: "/templates" },
     { label: "Reporting", to: "/reporting" }
