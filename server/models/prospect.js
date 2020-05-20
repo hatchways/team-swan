@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {});
   Prospect.associate = function(models) {
-    // associations can be defined here
+    Prospect.belongsTo(models.User)
   };
   return Prospect;
 };
