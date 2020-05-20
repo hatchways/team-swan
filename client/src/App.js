@@ -1,18 +1,25 @@
 import React from "react";
 import MainLayout from "./pages/mainlayout";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
+import withAuth from "common/withAuth";
 
-function App() {
+function App({ isAuthenticated }) {
   return (
     <MainLayout>
       <Switch>
-        <Route path="/login" component={Login} />
-        <Route path="/" component={Signup} />
+        {isAuthenticated ? (
+          <Redirect to="/campaigns" />
+        ) : (
+          <>
+            <Route exact path="/login" render={Login} />
+            <Route exact path="/" component={Signup} />
+          </>
+        )}
       </Switch>
     </MainLayout>
   );
 }
 
-export default App;
+export default withAuth(App, false);
