@@ -1,0 +1,14 @@
+/**
+ * This file is a config file for the database
+ * This file tells sequelize where to look for models,seeders,config and migrations
+ * So we could just run "npx sequelize db:migrate" to migrate.
+ */
+
+const path = require('path')
+
+module.exports = {
+  config: path.resolve('./database/config', 'config.js'),
+  'models-path': path.resolve('./database/models'),
+  'seeders-path': path.resolve('./database/seeders'),
+  'migrations-path': path.resolve('./database/migrations'),
+}
