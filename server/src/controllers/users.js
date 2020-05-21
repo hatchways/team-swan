@@ -103,6 +103,8 @@ class UserController {
     const userJWT = jwt.sign(
       {
         id: newUser.id,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
         email: newUser.email
       },
       process.env.JWT_KEY
