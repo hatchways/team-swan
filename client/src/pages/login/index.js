@@ -3,8 +3,10 @@ import { Link as RouterLink } from "react-router-dom";
 import { Typography, Link } from "@material-ui/core";
 import useSnackbar from "common/useSnackbar";
 import PaperForm from "common/PaperForm";
+import axios from "axios";
+import withAuth from "common/withAuth";
 
-const Login = () => {
+const Login = ({ validateAuthCookie }) => {
   const [email, setEmail] = useState(null);
   const [emailError, setEmailError] = useState(null);
 
@@ -55,7 +57,14 @@ const Login = () => {
     let passwordErrorMessage = validatePassword();
     let emailErrorMessage = validateEmail();
     if (!passwordErrorMessage && !emailErrorMessage) {
-      //TODO submit the form
+      axios
+        .post("/api/signin", { email, password })
+        .then((response) => {
+          validateAuthCookie();
+        })
+        .catch((error) => {
+          showSnackbar(error.response.data.errors[0].message, "error");
+        });
     } else {
       //Display all errors
       setEmailError(emailErrorMessage);
@@ -100,4 +109,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default withAuth(Login, false);
