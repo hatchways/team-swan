@@ -49,12 +49,6 @@ export const theme = createMuiTheme({
         background:
           "linear-gradient(99deg, rgba(42,168,151,1) 10%, rgba(79,190,117,1) 100%)"
       }
-    },
-    MuiAppBar: {
-      //App bar overrides
-      root: {
-        borderBottom: "1px solid #E0E0E0"
-      }
     }
   }
 });

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles, Button, Avatar, MenuItem, Menu } from "@material-ui/core";
 import { ArrowDropDown } from "@material-ui/icons";
-import withAuth from "common/withAuth";
 import profilepic from "./profilepic.png";
 
 //CSS styles

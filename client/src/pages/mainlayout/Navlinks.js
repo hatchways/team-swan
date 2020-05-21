@@ -3,22 +3,31 @@ import { Tabs, Tab, makeStyles } from "@material-ui/core";
 import { useLocation, Link } from "react-router-dom";
 
 //CSS styles
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   tabContainer: {
     marginRight: "10rem"
   },
   tab: {
     height: "6rem",
+    padding: "10px",
     color: "black"
   },
-  tabScrollButton: {
+  indicator: {
+    display: "flex",
+    justifyContent: "center",
     height: "5px",
-    top: 0
+    top: 0,
+    backgroundColor: "transparent",
+    "& div": {
+      maxWidth: 100,
+      width: "100%",
+      backgroundColor: theme.palette.primary.main
+    }
   }
-});
+}));
 
 const Navlinks = () => {
-  const { tab, tabScrollButton, tabContainer } = useStyles();
+  const { tab, indicator, tabContainer } = useStyles();
   const location = useLocation();
 
   const links = [
@@ -35,7 +44,10 @@ const Navlinks = () => {
       value={location.pathname}
       indicatorColor="primary"
       textColor="primary"
-      TabIndicatorProps={{ className: tabScrollButton }}
+      TabIndicatorProps={{
+        children: <div></div>,
+        className: indicator
+      }}
     >
       {links.map((link) => (
         <Tab
