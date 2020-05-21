@@ -1,27 +1,30 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "./AuthProvider";
 import { Redirect } from "react-router";
+import axios from "axios";
 
 const withAuth = (Component, shouldRedirectToLogin = true) => {
   const HighOrderComponent = (props) => {
-    const {
-      isAuthenticated,
-      setIsAuthenticated,
-      user,
-      setUser,
-      logout
-    } = useContext(AuthContext);
+    const { user, setUser, logout } = useContext(AuthContext);
 
     useEffect(() => {
-      //Fetch get user info
-      //401 logs out
+      axios
+        .get("/api/currentuser")
+        .then((response) => {
+          setUser(response.data.currentUser);
+        })
+        .catch((error) => {
+          if (error.response.status === 401) {
+            setUser(null);
+          }
+        });
     }, []);
 
-    if (isAuthenticated || !shouldRedirectToLogin) {
+    if (user || !shouldRedirectToLogin) {
       return (
         <Component
           {...props}
-          isAuthenticated={isAuthenticated}
+          isAuthenticated={user ? true : false}
           user={user}
           logout={logout}
         />

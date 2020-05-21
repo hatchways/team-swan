@@ -1,26 +1,19 @@
 import React, { useState, createContext, useEffect } from "react";
+import axios from "axios";
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    image: ""
-  });
+  const [user, setUser] = useState(null);
 
   const logout = () => {
-    //TODO
-    //Route logout
-    //setAuthentication to false adn set user to empty values
-    setIsAuthenticated(false);
+    axios.post("/api/signout").then((response) => {
+      setUser(null);
+    });
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, setIsAuthenticated, user, setUser, logout }}
-    >
+    <AuthContext.Provider value={{ user, setUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

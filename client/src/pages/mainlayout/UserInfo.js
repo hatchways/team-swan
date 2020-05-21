@@ -41,7 +41,7 @@ const UserInfo = ({ user, logout }) => {
         onClick={(e) => setMenuAnchorElement(e.currentTarget)}
         endIcon={<ArrowDropDown className={icon} />}
       >
-        {user.name}
+        {`${user.firstName} ${user.lastName}`}
       </Button>
 
       <Menu

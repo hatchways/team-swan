@@ -20,13 +20,21 @@ function App({ isAuthenticated }) {
         <Route
           path="/login"
           render={(props) =>
-            isAuthenticated ? <Redirect to="/campaigns" /> : <Login />
+            isAuthenticated ? (
+              <Redirect to="/campaigns" />
+            ) : (
+              <Login {...props} />
+            )
           }
         />
         <Route
           path="/"
           render={(props) =>
-            isAuthenticated ? <Redirect to="/campaigns" /> : <Signup />
+            isAuthenticated ? (
+              <Redirect to="/campaigns" />
+            ) : (
+              <Signup {...props} />
+            )
           }
         />
       </Switch>

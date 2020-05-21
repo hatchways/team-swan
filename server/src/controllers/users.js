@@ -19,8 +19,8 @@ class UserController {
     // Check if a user exists with a given email
     const existingUser = await db.User.findOne({
       where: {
-        email,
-      },
+        email
+      }
     });
 
     // If the user is not found then it throws a new BadRequestError which is handled by error-handler middleware
@@ -45,14 +45,16 @@ class UserController {
     const userJWT = jwt.sign(
       {
         id: existingUser.id,
-        email: existingUser.email,
+        firstName: existingUser.firstName,
+        lastName: existingUser.lastName,
+        email: existingUser.email
       },
       process.env.JWT_KEY
     );
 
     // Set a cookie called jwt inside the session
     req.session = {
-      jwt: userJWT,
+      jwt: userJWT
     };
 
     // Logging just for review purposes
@@ -78,8 +80,8 @@ class UserController {
     //Check if there is a user with same email address in the DB already
     const existingUser = await db.User.findOne({
       where: {
-        email,
-      },
+        email
+      }
     });
 
     //If the user exists throw a new BadRequestError to handle it
@@ -92,7 +94,7 @@ class UserController {
       email,
       password,
       firstName,
-      lastName,
+      lastName
     });
 
     // OPTIONAL COULD BE REMOVED lines 56-67
@@ -101,14 +103,14 @@ class UserController {
     const userJWT = jwt.sign(
       {
         id: newUser.id,
-        email: newUser.email,
+        email: newUser.email
       },
       process.env.JWT_KEY
     );
 
     // Return a new cookie to the session that contains the jwt
     req.session = {
-      jwt: userJWT,
+      jwt: userJWT
     };
 
     // Finally return information about the new user back to client

@@ -2,11 +2,11 @@ import React from "react";
 import { CssBaseline } from "@material-ui/core";
 import Navbar from "./Navbar";
 
-const MainLayout = ({ isAuthenticated, user, logout, children }) => {
+const MainLayout = ({ children }) => {
   return (
     <>
       <CssBaseline />
-      <Navbar isAuthenticated />
+      <Navbar />
       {children}
     </>
   );
