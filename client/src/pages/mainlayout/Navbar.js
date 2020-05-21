@@ -3,7 +3,7 @@ import { AppBar, makeStyles } from "@material-ui/core";
 import logo from "./logo.png";
 import withAuth from "common/withAuth";
 import Navlinks from "./Navlinks";
-import UserInfo from "./UserInfo";
+import Profile from "./Profile";
 
 //CSS styles
 const useStyles = makeStyles({
@@ -36,7 +36,7 @@ const Navbar = ({ isAuthenticated, user, logout }) => {
       {isAuthenticated && (
         <>
           <Navlinks />
-          <UserInfo user={user} logout={logout} />
+          <Profile user={user} logout={logout} />
         </>
       )}
     </AppBar>

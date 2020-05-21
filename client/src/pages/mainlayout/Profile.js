@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   }
 });
 
-const UserInfo = ({ user, logout }) => {
+const Profile = ({ user, logout }) => {
   const [menuAnchorElement, setMenuAnchorElement] = useState(null);
   const { container, avatar, button, icon, menu } = useStyles();
 
@@ -63,4 +63,4 @@ const UserInfo = ({ user, logout }) => {
   );
 };
 
-export default UserInfo;
+export default Profile;
