@@ -8,6 +8,7 @@ const errorHandler = require("./middleware/error-handler");
 const cookieSession = require("cookie-session");
 
 const userAuthRoute = require("./routes/user-auth");
+const prospectsRoute = require("./routes/prospect");
 
 const { json, urlencoded } = express;
 
@@ -27,6 +28,7 @@ app.use(express.static(join(__dirname, "public")));
 
 // User routes
 app.use(userAuthRoute);
+app.use(prospectsRoute);
 app.use(errorHandler);
 
 // catch 404 and forward to error handler
