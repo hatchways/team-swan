@@ -1,7 +1,7 @@
 import React from "react";
 import { Tabs, Tab, makeStyles } from "@material-ui/core";
 import { useLocation, Link } from "react-router-dom";
-import { campaigns, prospects, templates, reporting } from "constants/links";
+import { campaigns, prospects, templates, reporting } from "constants/routes";
 
 //CSS styles
 const useStyles = makeStyles((theme) => ({
