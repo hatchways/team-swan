@@ -1,6 +1,7 @@
 import React from "react";
 import { Tabs, Tab, makeStyles } from "@material-ui/core";
 import { useLocation, Link } from "react-router-dom";
+import { campaigns, prospects, templates, reporting } from "constants/routes";
 
 //CSS styles
 const useStyles = makeStyles((theme) => ({
@@ -31,10 +32,10 @@ const Navlinks = () => {
   const location = useLocation();
 
   const links = [
-    { label: "Campaigns", to: "/campaigns" },
-    { label: "Prospects", to: "/prospects" },
-    { label: "Templates", to: "/templates" },
-    { label: "Reporting", to: "/reporting" }
+    { label: "Campaigns", to: campaigns },
+    { label: "Prospects", to: prospects },
+    { label: "Templates", to: templates },
+    { label: "Reporting", to: reporting }
   ];
 
   return (
