@@ -12,15 +12,30 @@ module.exports = {
         isBetaMember: false
       }], {});
     */
-    return queryInterface.bulkInsert('Prospects', [{
-      email: 'demo@demo.com',
-      status: 'open',
-      firstName: 'John',
-      lastName: 'Doe',
-      userId: 1,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }], {});
+    return queryInterface.bulkInsert(
+      "Prospects",
+      [
+        {
+          email: "demo@demo.com",
+          status: "open",
+          firstName: "John",
+          lastName: "Doe",
+          userId: 1,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          email: "agadberr@gmail.com",
+          status: "responded",
+          firstName: "Aidan",
+          lastName: "Gadberry",
+          userId: 1,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+      {}
+    );
   },
 
   down: (queryInterface, Sequelize) => {
