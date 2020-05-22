@@ -37,7 +37,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {});
   Prospect.associate = function(models) {
-    Prospect.belongsTo(models.User)
+    Prospect.belongsTo(models.User, {
+      foreignKey: "userId"
+    })
   };
   return Prospect;
 };
