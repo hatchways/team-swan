@@ -9,67 +9,67 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: '"First Name" is required',
-          },
-        },
+            msg: '"First Name" is required'
+          }
+        }
       },
       lastName: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: '"Last Name" is required',
-          },
-        },
+            msg: '"Last Name" is required'
+          }
+        }
       },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: '"Email Address" is required',
+            msg: '"Email Address" is required'
           },
           isEmail: {
-            msg: '"Email Address" is not valid',
-          },
+            msg: '"Email Address" is not valid'
+          }
         },
         unique: {
           args: true,
-          msg: "Email address already in use!",
-        },
+          msg: "Email address already in use!"
+        }
       },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: '"Password" is required',
-          },
-        },
+            msg: '"Password" is required'
+          }
+        }
       },
       createdAt: {
         allowNull: false,
-        type: DataTypes.DATE,
+        type: DataTypes.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: DataTypes.DATE,
-      },
+        type: DataTypes.DATE
+      }
     },
     {
       sequelize,
-      modelName: "User",
+      modelName: "User"
     }
   );
   User.associate = function (models) {
-    // associations can be defined here
+    User.hasMany(models.Campaign, { foreignKey: "userId" });
   };
 
   /**
@@ -85,10 +85,10 @@ module.exports = (sequelize, DataTypes) => {
   /**
    * The prototype.toJSON is a function that controls what is returned to user when a query is made
    * By default we don't want to share more information from here but
-   * If we need to get any field value we could always refernce .dataValues property after the call or 
+   * If we need to get any field value we could always refernce .dataValues property after the call or
    * remove it from here to be applied on every query made
    */
-  User.prototype.toJSON =  function () {
+  User.prototype.toJSON = function () {
     var values = Object.assign({}, this.get());
     delete values.password;
     delete values.createdAt;
@@ -96,7 +96,7 @@ module.exports = (sequelize, DataTypes) => {
     delete values.lastName;
     delete values.firstName;
     return values;
-  }
+  };
 
   return User;
 };
