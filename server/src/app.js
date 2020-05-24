@@ -8,6 +8,7 @@ const errorHandler = require("./middleware/error-handler");
 const cookieSession = require("cookie-session");
 
 const userAuthRoute = require("./routes/user-auth");
+const campaignRoute = require("./routes/campaign");
 
 const { json, urlencoded } = express;
 
@@ -20,13 +21,14 @@ app.use(cookieParser());
 app.use(
   cookieSession({
     signed: false,
-    secure: false,
+    secure: false
   })
 );
 app.use(express.static(join(__dirname, "public")));
 
 // User routes
 app.use(userAuthRoute);
+app.use(campaignRoute);
 app.use(errorHandler);
 
 // catch 404 and forward to error handler
