@@ -69,6 +69,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   User.associate = function (models) {
+    User.hasMany(models.Prospect, {
+      as: "prospects",
+      foreignKey: "userId"
+    });
     User.hasMany(models.Campaign, { foreignKey: "userId" });
   };
 
