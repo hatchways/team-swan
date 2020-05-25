@@ -30,6 +30,11 @@ module.exports = (sequelize, DataTypes) => {
 
   Campaign.associate = function (models) {
     Campaign.belongsTo(models.User, { foreignKey: "userId" });
+    Campaign.belongsToMany(models.Prospect, {
+      through: "CampaignProspect",
+      foreignKey: "campaignId",
+      onDelete: "CASCADE"
+    });
   };
 
   return Campaign;
