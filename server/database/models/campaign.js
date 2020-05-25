@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Campaign.associate = function (models) {
     Campaign.belongsTo(models.User, { foreignKey: "userId" });
+    Campaign.hasMany(models.Step, { foreignKey: "campaignId" });
     Campaign.belongsToMany(models.Prospect, {
       through: "CampaignProspect",
       foreignKey: "campaignId",
