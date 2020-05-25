@@ -1,5 +1,6 @@
 const db = require("../../database/models/index");
 const BadRequestError = require("../errors/bad-request-error");
+const Op = db.Sequelize.Op;
 
 class CampaignController {
   static getCampaigns = async (req, res) => {
@@ -22,14 +23,13 @@ class CampaignController {
     const campaign = await db.Campaign.findOne({
       where: {
         id: req.params.id
-      }
+      },
+      include: db.Prospect
     });
 
     if (!campaign) {
       throw new BadRequestError("Campaign does not exist");
     }
-
-    //TODO also get the prospects (use eager loading)
 
     res.send(campaign);
   };
@@ -51,6 +51,30 @@ class CampaignController {
     });
 
     res.status(201).send(newCampaign);
+  };
+
+  static addProspects = async (req, res) => {
+    const campaign = await db.Campaign.findOne({
+      where: {
+        id: req.params.id
+      }
+    });
+
+    if (!campaign) {
+      throw new BadRequestError("Campaign does not exist");
+    }
+
+    const prospects = await db.Prospect.findAll({
+      where: {
+        id: {
+          [Op.in]: req.body.prospects
+        }
+      }
+    });
+
+    const newCampaignProspects = await campaign.addProspects(prospects);
+
+    res.send(newCampaignProspects);
   };
 
   static deleteCampaign = async (req, res) => {

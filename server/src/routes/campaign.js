@@ -33,4 +33,12 @@ router.delete(
   CampaignController.deleteCampaign
 );
 
+router.post(
+  "/api/campaign/:id/addProspects",
+  [body("prospects").notEmpty().withMessage("Prospects is required")],
+  validateRequest,
+  requireAuth,
+  CampaignController.addProspects
+);
+
 module.exports = router;
