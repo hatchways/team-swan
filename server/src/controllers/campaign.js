@@ -90,8 +90,6 @@ class CampaignController {
 
     await campaign.destroy();
 
-    //TODO also delete the prospects many to many relationship
-
     res.status(200).send();
   };
 }
