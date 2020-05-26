@@ -9,7 +9,7 @@ export default ({ mappedAttributes, setActiveStep, filename }) => {
 
     const onclick = async () => {
         try {
-            const resp = await axios.post('/api/addprospects', { mappedAttributes, filename })
+            const resp = await axios.post('/api/prospect', { mappedAttributes, filename })
             showSnackbar(resp.data.message, 'success')
             setActiveStep((prevStep) => prevStep + 1)
         } catch (err) {
