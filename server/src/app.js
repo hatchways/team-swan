@@ -9,7 +9,7 @@ const cookieSession = require("cookie-session");
 
 const userAuthRoute = require("./routes/user-auth");
 const uploadRoute = require("./routes/upload-routes");
-
+const prospectsRoute = require("./routes/prospect");
 const { json, urlencoded } = express;
 
 var app = express();
@@ -29,6 +29,7 @@ app.use(express.static(join(__dirname, "public")));
 // User routes
 app.use(userAuthRoute);
 app.use(uploadRoute)
+app.use(prospectsRoute);
 app.use(errorHandler);
 
 // catch 404 and forward to error handler
