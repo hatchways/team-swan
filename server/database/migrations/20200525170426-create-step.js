@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("Steps", {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable("Steps", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -29,7 +29,12 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+
+    return await queryInterface.addIndex("Steps", ["order", "campaignId"], {
+      unique: true
+    });
   },
+
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable("Steps");
   }

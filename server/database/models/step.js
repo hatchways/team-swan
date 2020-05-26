@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Step.associate = function (models) {
-    Step.belongsTo(models.Campaign, { foriegnKey: "campaignId" });
-    Step.hasOne(models.Template, { foriegnKey: "stepId" });
+    Step.belongsTo(models.Campaign, { foreignKey: "campaignId" });
+    Step.hasOne(models.Template, { foreignKey: "stepId" });
   };
   return Step;
 };

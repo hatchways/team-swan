@@ -2,11 +2,11 @@ const Password = require("../../src/utils/password");
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    const queryResult = await queryInterface.sequelize.query(
+    const getMaxUserIdQuery = await queryInterface.sequelize.query(
       `SELECT MAX(id) FROM "Users";`
     );
 
-    const userId = queryResult[0][0].max + 1;
+    const userId = getMaxUserIdQuery[0][0].max + 1;
 
     //Insert a user
     await queryInterface.bulkInsert("Users", [
@@ -44,6 +44,8 @@ module.exports = {
     ]);
   },
 
-  down: (queryInterface, Sequelize) =>
-    queryInterface.bulkDelete("Users", null, {})
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.bulkDelete("Campaigns", null, {});
+    return await queryInterface.bulkDelete("Users", null, {});
+  }
 };
