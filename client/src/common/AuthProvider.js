@@ -4,7 +4,7 @@ import axios from "axios";
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
 
   const logout = () => {
     axios.post("/api/signout").then((response) => {
