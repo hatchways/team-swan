@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Dropzone from "react-dropzone";
 import { makeStyles } from "@material-ui/core/styles";
 import useSnackBar from "common/useSnackbar";

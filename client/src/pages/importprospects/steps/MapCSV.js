@@ -21,14 +21,6 @@ const StyledTableCell = withStyles((theme) => ({
   },
 }))(TableCell);
 
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    // '&:nth-of-type(odd)': {
-    //   backgroundColor: theme.palette.action.hover,
-    // },
-  },
-}))(TableRow);
-
 const useStyles = makeStyles({
   table: {
     minWidth: 700,
@@ -62,23 +54,19 @@ export default function MapCSV({ tableHead, attributes, properties, mappedAttrib
         <TableBody>
           {attributes.map((attr) => {
             return (
-              <StyledTableRow key={Math.random()}>
+              <TableRow key={Math.random()}>
                 <StyledTableCell align="center" component="th" scope="row">
                   {attr}
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   <NativeSelect name={attr} value={mappedAttributes[attr]} onChange={onChange}>
                     <option value="">None</option>
-                    {mappedAttributes[attr] &&
-                      <option value={mappedAttributes[attr]}>
-                        {mappedAttributes[attr]}
-                      </option>}
                     {properties.map((property) => {
                       return (<option value={property} key={property}>{property}</option>)
                     })}
                   </NativeSelect>
                 </StyledTableCell>
-              </StyledTableRow>)
+              </TableRow>)
           })}
         </TableBody>
       </Table>

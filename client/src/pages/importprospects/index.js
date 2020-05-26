@@ -10,7 +10,6 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import VideoLabelIcon from "@material-ui/icons/VideoLabel";
 import StepConnector from "@material-ui/core/StepConnector";
-import Button from "@material-ui/core/Button";
 import { Redirect } from 'react-router-dom';
 import Typography from "@material-ui/core/Typography";
 import UploadCSV from "./steps/UploadCSV";
@@ -281,18 +280,6 @@ const ImportProspects = () => {
     setMappedAttributes: setMappedAttributes,
     mappedAttributes: mappedAttributes,
     setActiveStep: setActiveStep
-  };
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
   };
 
   return (
