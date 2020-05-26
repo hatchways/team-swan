@@ -27,7 +27,7 @@ module.exports = {
       },
       body: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         validate: {
           notEmpty: {
             msg: '"Body" is required'

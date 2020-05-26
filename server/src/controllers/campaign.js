@@ -96,8 +96,7 @@ class CampaignController {
 
     let nextOrder = 1;
     if (campaign.Steps.length > 0) {
-      const stepOrders = campaign.Steps.map((step) => step.order);
-      nextOrder = Math.max(...stepOrders) + 1;
+      nextOrder = campaign.Steps.length + 1;
     }
 
     const step = await db.Step.create({
