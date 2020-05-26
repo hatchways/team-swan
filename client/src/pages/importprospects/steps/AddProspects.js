@@ -3,13 +3,13 @@ import { Button } from '@material-ui/core';
 import useSnackbar from 'common/useSnackbar'
 import axios from 'axios';
 
-export default ({ mappedAttributes, setActiveStep }) => {
+export default ({ mappedAttributes, setActiveStep, filename }) => {
 
     const showSnackbar = useSnackbar()
 
     const onclick = async () => {
         try {
-            const resp = await axios.post('/api/addprospects', { mappedAttributes })
+            const resp = await axios.post('/api/addprospects', { mappedAttributes, filename })
             showSnackbar(resp.data.message, 'success')
             setActiveStep((prevStep) => prevStep + 1)
         } catch (err) {

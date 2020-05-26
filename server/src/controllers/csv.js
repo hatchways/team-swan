@@ -95,22 +95,16 @@ class CSVController {
               // Get the attributes of the Prospect Table 
               const attributes = (Object.keys(db.sequelize.models.Prospect.rawAttributes))
                 .filter(attr => {
-                  return ['createdAt', 'updatedAt', 'status', 'id'].indexOf(attr) === -1
+                  return ['createdAt', 'updatedAt', 'status', 'id', 'userId'].indexOf(attr) === -1
                 })
               console.log(attributes)
-
-
-              // Set up a cookie equal to the file name for reference
-              req.session = {
-                ...req.session,
-                filename: filename
-              }
 
               // Send message to client
               return res.send({
                 message: "Files uploaded successfully!",
                 properties,
-                attributes
+                attributes,
+                filename
               });
             });
         } catch (err) {
@@ -126,7 +120,7 @@ class CSVController {
   // The controller that handles adding prospects to the DB
   static addProspects = async (req, res) => {
     // Name of the file in which the data is stored
-    const filename = req.session.filename
+    const filename = req.body.filename
 
     // The mapped attributes that the user selected
     const mappedAttributes = req.body.mappedAttributes
@@ -146,7 +140,8 @@ class CSVController {
                 email: result[mappedAttributes["email"]],
                 status: "unsubscribed",
                 firstName: result[mappedAttributes["firstName"]],
-                lastName: result[mappedAttributes["lastName"]]
+                lastName: result[mappedAttributes["lastName"]],
+                userId: req.currentUser.id
               }
             }))
           }

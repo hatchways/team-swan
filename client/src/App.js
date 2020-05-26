@@ -9,7 +9,7 @@ import Prospects from "./pages/prospects";
 import Templates from "./pages/templates";
 import Reporting from "./pages/reporting";
 import { campaigns, prospects, templates, reporting, importProspects } from "constants/routes";
-import ImportProspects from "./pages/importprospects";
+import ImportProspects from "./pages/importProspects";
 
 function App({ isAuthenticated }) {
   return (
