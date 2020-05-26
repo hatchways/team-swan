@@ -5,6 +5,7 @@ module.exports = {
       prospectId: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        primaryKey: true,
         onDelete: "CASCADE",
         references: {
           model: "Prospects",
@@ -14,6 +15,7 @@ module.exports = {
       campaignId: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        primaryKey: true,
         onDelete: "CASCADE",
         references: {
           model: "Campaigns",

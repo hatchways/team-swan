@@ -3,10 +3,15 @@ import { Link as RouterLink } from "react-router-dom";
 import { Typography, Link } from "@material-ui/core";
 import useSnackbar from "common/useSnackbar";
 import PaperForm from "common/PaperForm";
+import axios from "axios";
+import withAuth from "common/withAuth";
 
-const Signup = () => {
-  const [name, setName] = useState(null);
-  const [nameError, setNameError] = useState(null);
+const Signup = ({ validateAuthCookie }) => {
+  const [firstName, setFirstName] = useState(null);
+  const [firstNameError, setFirstNameError] = useState(null);
+
+  const [lastName, setLastName] = useState(null);
+  const [lastNameError, setLastNameError] = useState(null);
 
   const [email, setEmail] = useState(null);
   const [emailError, setEmailError] = useState(null);
@@ -19,13 +24,21 @@ const Signup = () => {
 
   const showSnackbar = useSnackbar();
 
-  //Validate the name every change
+  //Validate the first name every change
   useEffect(() => {
     //Check null initial value to avoid showing errors on first render
-    if (name !== null) {
-      setNameError(validateName());
+    if (firstName !== null) {
+      setFirstNameError(validateName(firstName, "First Name"));
     }
-  }, [name]);
+  }, [firstName]);
+
+  //Validate the last name every change
+  useEffect(() => {
+    //Check null initial value to avoid showing errors on first render
+    if (lastName !== null) {
+      setLastNameError(validateName(lastName, "Last Name"));
+    }
+  }, [lastName]);
 
   //Validate the email every change
   useEffect(() => {
@@ -49,11 +62,11 @@ const Signup = () => {
   }, [password, confirmPassword]);
 
   //Name Validation
-  const validateName = () => {
+  const validateName = (name, label) => {
     if (!name) {
-      return "Name is required";
-    } else if (name.length > 30) {
-      return "Name must not exceed 30 characters";
+      return `${label} is required`;
+    } else if (name.length > 20) {
+      return `${label} must not exceed 20 characters`;
     } else {
       return null;
     }
@@ -93,20 +106,30 @@ const Signup = () => {
 
   //Submit form
   const signup = () => {
-    let nameErrorMessage = validateName();
+    let firstNameErrorMessage = validateName(firstName, "First Name");
+    let lastNameErrorMessage = validateName(lastName, "Last Name");
     let emailErrorMessage = validateEmail();
     let passwordErrorMessage = validatePassword();
     let confirmPasswordErrorMessage = validateConfirmPassword();
     if (
-      !nameErrorMessage &&
+      !firstNameErrorMessage &&
+      !lastNameErrorMessage &&
       !emailErrorMessage &&
       !passwordErrorMessage &&
       !confirmPasswordErrorMessage
     ) {
-      //TODO submit the form
+      axios
+        .post("/api/signup", { firstName, lastName, email, password })
+        .then((response) => {
+          validateAuthCookie();
+        })
+        .catch((error) => {
+          showSnackbar(error.response.data.errors[0].message, "error");
+        });
     } else {
       //Display all errors
-      setNameError(nameErrorMessage);
+      setFirstNameError(firstNameErrorMessage);
+      setLastNameError(lastNameErrorMessage);
       setEmailError(emailErrorMessage);
       setPasswordError(passwordErrorMessage);
       setConfirmPasswordError(confirmPasswordErrorMessage);
@@ -117,10 +140,18 @@ const Signup = () => {
     <PaperForm
       fields={[
         {
-          value: name,
-          errorMessage: nameError,
-          onChange: setName,
-          label: "Name",
+          value: firstName,
+          errorMessage: firstNameError,
+          onChange: setFirstName,
+          label: "First Name",
+          type: "text",
+          size: "small"
+        },
+        {
+          value: lastName,
+          errorMessage: lastNameError,
+          onChange: setLastName,
+          label: "Last Name",
           type: "text",
           size: "small"
         },
@@ -164,4 +195,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default withAuth(Signup, false);

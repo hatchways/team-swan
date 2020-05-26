@@ -4,17 +4,11 @@ const Op = db.Sequelize.Op;
 
 class CampaignController {
   static getCampaigns = async (req, res) => {
-    const user = await db.User.findOne({
+    const campaigns = await db.Campaign.findAll({
       where: {
-        id: req.params.userId
+        userId: req.currentUser.id
       }
     });
-
-    if (!user) {
-      throw new BadRequestError("User does not exist");
-    }
-
-    const campaigns = await user.getCampaigns();
 
     res.send(campaigns);
   };
@@ -22,7 +16,8 @@ class CampaignController {
   static getCampaign = async (req, res) => {
     const campaign = await db.Campaign.findOne({
       where: {
-        id: req.params.id
+        id: req.params.id,
+        userId: req.currentUser.id
       },
       include: db.Prospect
     });
@@ -35,19 +30,9 @@ class CampaignController {
   };
 
   static createCampaign = async (req, res) => {
-    const user = await db.User.findOne({
-      where: {
-        id: req.params.userId
-      }
-    });
-
-    if (!user) {
-      throw new BadRequestError("User does not exist");
-    }
-
     const newCampaign = await db.Campaign.create({
       name: req.body.name,
-      userId: user.id
+      userId: req.currentUser.id
     });
 
     res.status(201).send(newCampaign);
@@ -56,7 +41,8 @@ class CampaignController {
   static addProspects = async (req, res) => {
     const campaign = await db.Campaign.findOne({
       where: {
-        id: req.params.id
+        id: req.params.id,
+        userId: req.currentUser.id
       }
     });
 
@@ -68,7 +54,8 @@ class CampaignController {
       where: {
         id: {
           [Op.in]: req.body.prospects
-        }
+        },
+        userId: req.currentUser.id
       }
     });
 
@@ -80,7 +67,8 @@ class CampaignController {
   static deleteCampaign = async (req, res) => {
     const campaign = await db.Campaign.findOne({
       where: {
-        id: req.params.id
+        id: req.params.id,
+        userId: req.currentUser.id
       }
     });
 
@@ -89,8 +77,6 @@ class CampaignController {
     }
 
     await campaign.destroy();
-
-    //TODO also delete the prospects many to many relationship
 
     res.status(200).send();
   };
