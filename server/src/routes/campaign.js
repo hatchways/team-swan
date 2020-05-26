@@ -4,16 +4,12 @@ const { body } = require("express-validator");
 const validateRequest = require("../middleware/validate-request");
 const requireAuth = require("../middleware/require-auth");
 
-router.get(
-  "/api/user/:userId/campaign",
-  requireAuth,
-  CampaignController.getCampaigns
-);
+router.get("/api/campaign", requireAuth, CampaignController.getCampaigns);
 
 router.get("/api/campaign/:id", requireAuth, CampaignController.getCampaign);
 
 router.post(
-  "/api/user/:userId/campaign",
+  "/api/campaign",
   requireAuth,
   [
     body("name")
