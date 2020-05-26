@@ -19,7 +19,7 @@ class CampaignController {
         id: req.params.id,
         userId: req.currentUser.id
       },
-      include: db.Prospect
+      include: [db.Prospect, db.Step]
     });
 
     if (!campaign) {
@@ -84,7 +84,8 @@ class CampaignController {
   static addStep = async (req, res) => {
     const campaign = await db.Campaign.findOne({
       where: {
-        id: req.params.id
+        id: req.params.id,
+        userId: req.currentUser.id
       },
       include: db.Step
     });
@@ -101,36 +102,41 @@ class CampaignController {
 
     const step = await db.Step.create({
       order: nextOrder,
-      campaignId: campaign.id
-    });
-
-    const template = await db.Template.create({
-      subject: req.body.subject,
-      body: req.body.body,
-      stepId: step.id
-    });
-
-    res.status(201).send(step); //Should not send a an object just 201
-  };
-
-  static updateStep = async (req, res) => {
-    const step = await db.Step.findOne({
-      where: {
-        id: req.params.id
-      },
-      include: db.Template
-    });
-
-    if (!step) {
-      throw new BadRequestError("Step does not exist");
-    }
-
-    const template = await step.Template.update({
+      campaignId: campaign.id,
       subject: req.body.subject,
       body: req.body.body
     });
 
-    res.send(template);
+    res.status(201).send(step);
+  };
+
+  static updateStep = async (req, res) => {
+    const campaign = await db.Campaign.findOne({
+      where: {
+        id: req.params.id,
+        userId: req.currentUser.id
+      },
+      include: {
+        model: db.Step,
+        required: false,
+        where: {
+          order: req.params.order
+        }
+      }
+    });
+
+    if (!campaign) throw new BadRequestError("Campaign does not exist");
+
+    const step = campaign.Steps[0];
+
+    if (!step) throw new BadRequestError("Step does not exist");
+
+    const updatedStep = await step.update({
+      subject: req.body.subject,
+      body: req.body.body
+    });
+
+    res.send(updatedStep);
   };
 }
 

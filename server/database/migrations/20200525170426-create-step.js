@@ -1,23 +1,37 @@
 "use strict";
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Steps", {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
+  up: (queryInterface, Sequelize) =>
+    queryInterface.createTable("Steps", {
       order: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        primaryKey: true
       },
       campaignId: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        primaryKey: true,
         references: {
           model: "Campaigns",
           key: "id"
+        }
+      },
+      subject: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        validate: {
+          notEmpty: {
+            msg: '"Subject" is required'
+          }
+        }
+      },
+      body: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        validate: {
+          notEmpty: {
+            msg: '"Body" is required'
+          }
         }
       },
       createdAt: {
@@ -28,12 +42,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
-
-    return await queryInterface.addIndex("Steps", ["order", "campaignId"], {
-      unique: true
-    });
-  },
+    }),
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable("Steps");

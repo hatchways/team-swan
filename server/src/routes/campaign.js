@@ -49,7 +49,7 @@ router.post(
 );
 
 router.put(
-  "/api/step/:id",
+  "/api/campaign/:id/step/:order",
   requireAuth,
   [
     body("subject").notEmpty().withMessage("Subject is required"),
@@ -58,15 +58,5 @@ router.put(
   validateRequest,
   CampaignController.updateStep
 );
-
-//DELETE THIS
-const db = require("../../database/models");
-router.get("/api/step", async (req, res) => {
-  const steps = await db.Step.findAll({ include: db.Template });
-  const campaigns = await db.Campaign.findAll({ include: db.Step });
-
-  console.log(db.Campaign);
-  res.send(campaigns);
-});
 
 module.exports = router;
