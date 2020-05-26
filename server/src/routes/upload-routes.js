@@ -4,6 +4,6 @@ const CSVController = require('../controllers/csv')
 
 
 router.post("/api/upload", requireAuth, CSVController.uploadCSV);
-router.post("/api/addprospects", requireAuth, CSVController.addProspects);
+router.post("/api/prospect", requireAuth, CSVController.addProspects);
 
 module.exports = router;
