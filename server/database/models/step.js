@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     subject: {
       allowNull: false,
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING,
       validate: {
         notEmpty: {
           msg: '"Subject" is required'
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     body: {
       allowNull: false,
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       validate: {
         notEmpty: {
           msg: '"Body" is required'
