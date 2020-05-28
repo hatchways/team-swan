@@ -171,4 +171,4 @@ const Campaign = ({ user }) => {
   );
 };
 
-export default withAuth(Campaign, false);
+export default withAuth(Campaign);

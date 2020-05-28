@@ -1,4 +1,5 @@
-export const campaigns = "/campaigns";
-export const prospects = "/prospects";
-export const templates = "/templates";
+export const campaign = "/campaign/:id";
+export const campaigns = "/campaign";
+export const prospects = "/prospect";
+export const templates = "/template";
 export const reporting = "/reporting";

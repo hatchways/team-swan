@@ -1,29 +1,32 @@
-import React, { useState, createContext } from "react";
-import axios from "axios";
+import React, { useState, createContext } from 'react';
+import axios from 'axios';
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   const logout = () => {
-    axios.post("/api/signout").then((response) => {
-      setUser(null);
+    axios.post('/api/signout').then((response) => {
+      setUser({});
+      setIsAuthenticated(false);
     });
   };
 
   const validateAuthCookie = () => {
     axios
-      .get("/api/currentuser")
+      .get('/api/currentuser')
       .then((response) => {
         let userData = response.data.currentUser;
         if (
-          !user ||
+          !isAuthenticated ||
           user.firstName !== userData.firstName ||
           user.lastName !== userData.lastName ||
           user.image !== userData.image
         ) {
           setUser(userData);
+          setIsAuthenticated(true);
         }
       })
       .catch((error) => {
@@ -34,7 +37,9 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, validateAuthCookie, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, setUser, validateAuthCookie, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
