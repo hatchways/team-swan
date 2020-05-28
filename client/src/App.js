@@ -8,16 +8,19 @@ import Campaigns from "./pages/campaigns";
 import Prospects from "./pages/prospects";
 import Templates from "./pages/templates";
 import Reporting from "./pages/reporting";
-import { campaigns, prospects, templates, reporting } from "constants/routes";
+import { campaigns, prospects, templates, reporting, importProspects } from "constants/routes";
+import ImportProspects from "./pages/importProspects";
 
 function App({ isAuthenticated }) {
   return (
     <MainLayout>
       <Switch>
-        <Route path={prospects} component={Prospects} />
+        <Route path={importProspects} component={ImportProspects} />
+        <Route path={prospects} component={Prospects}></Route>
         <Route path={campaigns} component={Campaigns} />
         <Route path={reporting} component={Reporting} />
         <Route path={templates} component={Templates} />
+
         <Route
           path="/login"
           render={(props) =>
@@ -30,8 +33,8 @@ function App({ isAuthenticated }) {
             isAuthenticated ? (
               <Redirect to={campaigns} />
             ) : (
-              <Signup {...props} />
-            )
+                <Signup {...props} />
+              )
           }
         />
       </Switch>
