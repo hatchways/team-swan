@@ -11,6 +11,7 @@ const userAuthRoute = require("./routes/user-auth");
 const uploadRoute = require("./routes/upload-routes");
 const prospectsRoute = require("./routes/prospect");
 const campaignRoute = require("./routes/campaign");
+const gmailAuthRoute = require('./routes/gmail-auth')
 
 const { json, urlencoded } = express;
 
@@ -33,6 +34,7 @@ app.use(userAuthRoute);
 app.use(uploadRoute)
 app.use(prospectsRoute);
 app.use(campaignRoute);
+app.use(gmailAuthRoute)
 app.use(errorHandler);
 
 // catch 404 and forward to error handler
