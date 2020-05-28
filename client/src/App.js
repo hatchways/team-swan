@@ -10,11 +10,14 @@ import Templates from "./pages/templates";
 import Reporting from "./pages/reporting";
 import { campaigns, prospects, templates, reporting, importProspects } from "constants/routes";
 import ImportProspects from "./pages/importProspects";
+import Gmail from "pages/gmailAuth/Gmail";
+import AuthRoute from "pages/gmailAuth/AuthRoute";
 
 function App({ isAuthenticated }) {
   return (
     <MainLayout>
       <Switch>
+        <Route path='/gmailauth' component={AuthRoute}></Route>
         <Route path={importProspects} component={ImportProspects} />
         <Route path={prospects} component={Prospects}></Route>
         <Route path={campaigns} component={Campaigns} />
@@ -38,6 +41,7 @@ function App({ isAuthenticated }) {
           }
         />
       </Switch>
+      <Gmail></Gmail>
     </MainLayout>
   );
 }
