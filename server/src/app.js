@@ -10,6 +10,8 @@ const cookieSession = require("cookie-session");
 const userAuthRoute = require("./routes/user-auth");
 const uploadRoute = require("./routes/upload-routes");
 const prospectsRoute = require("./routes/prospect");
+const campaignRoute = require("./routes/campaign");
+
 const { json, urlencoded } = express;
 
 var app = express();
@@ -21,7 +23,7 @@ app.use(cookieParser());
 app.use(
   cookieSession({
     signed: false,
-    secure: false,
+    secure: false
   })
 );
 app.use(express.static(join(__dirname, "public")));
@@ -30,6 +32,7 @@ app.use(express.static(join(__dirname, "public")));
 app.use(userAuthRoute);
 app.use(uploadRoute)
 app.use(prospectsRoute);
+app.use(campaignRoute);
 app.use(errorHandler);
 
 // catch 404 and forward to error handler

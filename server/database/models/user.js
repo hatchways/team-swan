@@ -9,61 +9,63 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: '"First Name" is required',
-          },
-        },
+            msg: '"First Name" is required'
+          }
+        }
       },
       lastName: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: '"Last Name" is required',
-          },
-        },
+            msg: '"Last Name" is required'
+          }
+        }
       },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: '"Email Address" is required',
+            msg: '"Email Address" is required'
           },
           isEmail: {
-            msg: '"Email Address" is not valid',
-          },
+            msg: '"Email Address" is not valid'
+          }
         },
         unique: {
           args: true,
-          msg: "Email address already in use!",
-        },
+          msg: "Email address already in use!"
+        }
       },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: '"Password" is required',
-          },
-        },
+            msg: '"Password" is required'
+          }
+        }
       },
       createdAt: {
         allowNull: false,
-        type: DataTypes.DATE,
+        type: DataTypes.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: DataTypes.DATE,
-      },
+        type: DataTypes.DATE
+      }
     },
     {
+      sequelize,
+      modelName: "User"
     }
   );
   User.associate = function (models) {
@@ -71,6 +73,7 @@ module.exports = (sequelize, DataTypes) => {
       as: "prospects",
       foreignKey: "userId"
     });
+    User.hasMany(models.Campaign, { foreignKey: "userId" });
   };
 
   /**
