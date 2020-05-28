@@ -3,6 +3,7 @@ import axios from 'axios'
 import withAuth from "common/withAuth";
 import { Button, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import useSnackbar from 'common/useSnackbar';
 
 const useStyles = makeStyles({
     button: {
@@ -15,6 +16,7 @@ const useStyles = makeStyles({
 const GmailLogin = (props) => {
 
     const classes = useStyles()
+    const showSnackBar = useSnackbar()
 
     const [isGmailAuthorized, setGmailAuthorized] = React.useState(false)
 
@@ -29,12 +31,13 @@ const GmailLogin = (props) => {
 
     const handleClick = async () => {
 
-        const response = await axios.get('/gmail/authurl')
+        axios.get('/gmail/authurl').then((response) => {
+            const route = response.data.route
+            return window.location = route
+        }).catch((error) => {
+            showSnackBar('Error', 'error')
+        })
 
-        const route = response.data.route
-
-        console.log(route)
-        return window.location = route
     }
 
     return (

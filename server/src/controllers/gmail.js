@@ -1,12 +1,13 @@
 const { google } = require('googleapis')
+const DataBaseConnectionError = require('../errors/database-connection-error')
 
 // The controller for Gmail Client
 class Gmail {
 
     // Get an OAuthClient with configurations
     static get_oAuthClient = () => {
-        const client_id = '965872046245-vp27117p6epf8l47lkcgp5vluupushet.apps.googleusercontent.com'
-        const client_secret = 'rndhg5Avyv38L5c3jttixG7U'
+        const client_id = process.env.CLIENT_ID
+        const client_secret = process.env.CLIENT_SECRET
         const redirect_uris = 'http://localhost:3000/gmailauth'
 
         const oAuth2Client = new google.auth.OAuth2(
@@ -29,6 +30,7 @@ class Gmail {
 
         } catch (error) {
             console.log(error)
+            throw new DataBaseConnectionError
         }
     }
 
