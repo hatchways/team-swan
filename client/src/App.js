@@ -28,7 +28,7 @@ function App({ isAuthenticated }) {
         <Route path="/gmailauth" component={AuthRoute}></Route>
         <Route path={importProspects} component={ImportProspects} />
         <Route path={prospects} component={Prospects}></Route>
-        <Route exact path={campaign} component={Campaign} />
+        <Route path={campaign} component={Campaign} />
         <Route path={campaigns} component={Campaigns} />
         <Route path={reporting} component={Reporting} />
         <Route path={templates} component={Templates} />
