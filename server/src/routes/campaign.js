@@ -37,4 +37,26 @@ router.post(
   CampaignController.addProspects
 );
 
+router.post(
+  "/api/campaign/:id/step",
+  requireAuth,
+  [
+    body("subject").notEmpty().withMessage("Subject is required"),
+    body("body").notEmpty().withMessage("Body is required")
+  ],
+  validateRequest,
+  CampaignController.addStep
+);
+
+router.put(
+  "/api/campaign/:id/step/:order",
+  requireAuth,
+  [
+    body("subject").notEmpty().withMessage("Subject is required"),
+    body("body").notEmpty().withMessage("Body is required")
+  ],
+  validateRequest,
+  CampaignController.updateStep
+);
+
 module.exports = router;

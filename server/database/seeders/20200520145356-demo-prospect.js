@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -22,7 +22,7 @@ module.exports = {
           lastName: "Doe",
           userId: 1,
           createdAt: new Date(),
-          updatedAt: new Date(),
+          updatedAt: new Date()
         },
         {
           email: "agadberr@gmail.com",
@@ -31,20 +31,14 @@ module.exports = {
           lastName: "Gadberry",
           userId: 1,
           createdAt: new Date(),
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       ],
       {}
     );
   },
 
   down: (queryInterface, Sequelize) => {
-    /*
-      Add reverting commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.bulkDelete('People', null, {});
-    */
+    return queryInterface.bulkDelete("Prospects", null, {});
   }
 };
