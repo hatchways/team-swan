@@ -1,10 +1,3 @@
-import React, { useEffect } from 'react';
-import MainLayout from './pages/mainlayout';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import Login from './pages/login';
-import Signup from './pages/signup';
-import withAuth from 'common/withAuth';
-import Campaigns from './pages/campaigns';
 import React, { useEffect } from "react";
 import MainLayout from "./pages/mainlayout";
 import { Route, Switch, Redirect } from "react-router-dom";
@@ -12,6 +5,7 @@ import Login from "./pages/login";
 import Signup from "./pages/signup";
 import withAuth from "common/withAuth";
 import Campaigns from "./pages/campaigns";
+import Campaign from "./pages/campaigns";
 import Prospects from "./pages/prospects";
 import Templates from "./pages/templates";
 import Reporting from "./pages/reporting";
