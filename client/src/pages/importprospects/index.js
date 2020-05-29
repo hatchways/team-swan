@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
-import { Redirect } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import UploadCSV from "./steps/UploadCSV";
 import { Container } from "@material-ui/core";
@@ -16,7 +15,7 @@ import AddProspects from "./steps/AddProspects";
 import {
   Connector,
   ColorStepIcon,
-} from "pages/importProspects/component/StepsHeader";
+} from "pages/importProspects/importProspectsComponents/StepsHeader";
 
 const useStyles = makeStyles((theme) => ({
   root: {
