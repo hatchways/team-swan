@@ -6,8 +6,8 @@ class CampaignController {
   static getCampaigns = async (req, res) => {
     const campaigns = await db.Campaign.findAll({
       where: {
-        userId: req.currentUser.id
-      }
+        userId: req.currentUser.id,
+      },
     });
 
     res.send(campaigns);
@@ -17,9 +17,9 @@ class CampaignController {
     const campaign = await db.Campaign.findOne({
       where: {
         id: req.params.id,
-        userId: req.currentUser.id
+        userId: req.currentUser.id,
       },
-      include: db.Prospect
+      include: db.Prospect,
     });
 
     if (!campaign) {
@@ -32,7 +32,7 @@ class CampaignController {
   static createCampaign = async (req, res) => {
     const newCampaign = await db.Campaign.create({
       name: req.body.name,
-      userId: req.currentUser.id
+      userId: req.currentUser.id,
     });
 
     res.status(201).send(newCampaign);
@@ -42,8 +42,8 @@ class CampaignController {
     const campaign = await db.Campaign.findOne({
       where: {
         id: req.params.id,
-        userId: req.currentUser.id
-      }
+        userId: req.currentUser.id,
+      },
     });
 
     if (!campaign) {
@@ -53,10 +53,10 @@ class CampaignController {
     const prospects = await db.Prospect.findAll({
       where: {
         id: {
-          [Op.in]: req.body.prospects
+          [Op.in]: req.body.prospects,
         },
-        userId: req.currentUser.id
-      }
+        userId: req.currentUser.id,
+      },
     });
 
     const newCampaignProspects = await campaign.addProspects(prospects);
@@ -68,8 +68,8 @@ class CampaignController {
     const campaign = await db.Campaign.findOne({
       where: {
         id: req.params.id,
-        userId: req.currentUser.id
-      }
+        userId: req.currentUser.id,
+      },
     });
 
     if (!campaign) {

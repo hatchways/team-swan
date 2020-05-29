@@ -6,19 +6,20 @@ import Navlinks from "./Navlinks";
 import Profile from "./Profile";
 
 //CSS styles
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   navbar: {
     display: "flex",
     flexDirection: "row",
     height: "6rem",
     alignItems: "center",
     padding: "0 2rem 0 2rem",
-    borderBottom: "1px solid #E0E0E0"
+    borderBottom: "1px solid #E0E0E0",
+    zIndex: theme.zIndex.drawer + 1,
   },
   imageContainer: {
-    flexGrow: 1
-  }
-});
+    flexGrow: 1,
+  },
+}));
 
 const Navbar = ({ isAuthenticated, user, logout }) => {
   const { navbar, imageContainer } = useStyles();

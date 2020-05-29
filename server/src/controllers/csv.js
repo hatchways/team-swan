@@ -4,7 +4,7 @@ const uuid = require("uuid").v1;
 const fs = require("fs");
 const db = require("../../database/models/index");
 const csv = require("csv-parser");
-const BadRequestError = require('../errors/bad-request-error')
+const BadRequestError = require("../errors/bad-request-error");
 
 class CSVController {
   // The uploadcsv route controller
@@ -22,7 +22,7 @@ class CSVController {
       storage,
       fileFilter: function (req, file, cb) {
         file.mimetype === "text/csv" ||
-          file.mimetype === "application/vnd.ms-excel"
+        file.mimetype === "application/vnd.ms-excel"
           ? cb(null, true)
           : cb(null, false);
       },
@@ -48,7 +48,7 @@ class CSVController {
           const filename = req.file.filename;
           const results = [];
 
-          // Attempt upload to cloud 
+          // Attempt upload to cloud
           try {
             const url = (
               await axios.post(
@@ -92,26 +92,31 @@ class CSVController {
 
               const properties = Object.keys(results[0]);
 
-              // Get the attributes of the Prospect Table 
-              const attributes = (Object.keys(db.sequelize.models.Prospect.rawAttributes))
-                .filter(attr => {
-                  return ['createdAt', 'updatedAt', 'status', 'id', 'userId'].indexOf(attr) === -1
-                })
-              console.log(attributes)
+              // Get the attributes of the Prospect Table
+              const attributes = Object.keys(
+                db.sequelize.models.Prospect.rawAttributes
+              ).filter((attr) => {
+                return (
+                  ["createdAt", "updatedAt", "status", "id", "userId"].indexOf(
+                    attr
+                  ) === -1
+                );
+              });
+              console.log(attributes);
 
               // Send message to client
               return res.send({
                 message: "Files uploaded successfully!",
                 properties,
                 attributes,
-                filename
+                filename,
               });
             });
         } catch (err) {
           console.log("Caught:", err);
-          return res
-            .status(401)
-            .send({ errors: [{ message: "Error analyzing files, try again later" }] });
+          return res.status(401).send({
+            errors: [{ message: "Error analyzing files, try again later" }],
+          });
         }
       }
     });
@@ -120,11 +125,11 @@ class CSVController {
   // The controller that handles adding prospects to the DB
   static addProspects = async (req, res) => {
     // Name of the file in which the data is stored
-    const filename = req.body.filename
+    const filename = req.body.filename;
 
     // The mapped attributes that the user selected
-    const mappedAttributes = req.body.mappedAttributes
-    const results = []
+    const mappedAttributes = req.body.mappedAttributes;
+    const results = [];
 
     // Read the csv and create new prospects
     try {
@@ -133,37 +138,43 @@ class CSVController {
         .on("data", (data) => results.push(data))
         .on("end", async () => {
           if (!(results.length > 0)) {
-            return res.send(400).send({ errors: [{ message: "Empty csv file" }] })
+            return res
+              .send(400)
+              .send({ errors: [{ message: "Empty csv file" }] });
           } else {
-            await db.Prospect.bulkCreate(results.map((result) => {
-              return {
-                email: result[mappedAttributes["email"]],
-                status: "unsubscribed",
-                firstName: result[mappedAttributes["firstName"]],
-                lastName: result[mappedAttributes["lastName"]],
-                userId: req.currentUser.id
-              }
-            }))
+            await db.Prospect.bulkCreate(
+              results.map((result) => {
+                return {
+                  email: result[mappedAttributes["email"]],
+                  status: "open",
+                  firstName: result[mappedAttributes["firstName"]],
+                  lastName: result[mappedAttributes["lastName"]],
+                  userId: req.currentUser.id,
+                };
+              })
+            );
           }
 
           // Once added prospects delete the file from local server
           fs.unlink(`./prospects/${filename}`, (err) => {
             if (err) {
-              console.log(err)
+              console.log(err);
             }
-          })
-        })
+          });
+        });
     } catch (err) {
-      res.status(400).send({ "errors": [{ "message": "Error adding prospects to DB" }] })
+      console.log("\n\nError adding prospects to DB: \n", err);
+      res
+        .status(400)
+        .send({ errors: [{ message: "Error adding prospects to DB" }] });
     }
 
     // Set the filename cookie to null
-    req.session.filename = null
+    req.session.filename = null;
 
     // Send a success message
-    return res.send({ "message": "Prospects added" })
-
-  }
+    return res.send({ message: "Prospects added" });
+  };
 }
 
 module.exports = CSVController;
