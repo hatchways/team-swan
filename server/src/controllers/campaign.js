@@ -1,5 +1,5 @@
-const db = require("../../database/models/index");
-const BadRequestError = require("../errors/bad-request-error");
+const db = require('../../database/models/index');
+const BadRequestError = require('../errors/bad-request-error');
 const Op = db.Sequelize.Op;
 
 class CampaignController {
@@ -19,11 +19,12 @@ class CampaignController {
         id: req.params.id,
         userId: req.currentUser.id
       },
-      include: [db.Prospect, db.Step]
+      include: [db.Prospect, db.Step],
+      order: [[db.Step, 'order', 'ASC']]
     });
 
     if (!campaign) {
-      throw new BadRequestError("Campaign does not exist");
+      throw new BadRequestError('Campaign does not exist');
     }
 
     res.send(campaign);
@@ -47,7 +48,7 @@ class CampaignController {
     });
 
     if (!campaign) {
-      throw new BadRequestError("Campaign does not exist");
+      throw new BadRequestError('Campaign does not exist');
     }
 
     const prospects = await db.Prospect.findAll({
@@ -73,7 +74,7 @@ class CampaignController {
     });
 
     if (!campaign) {
-      throw new BadRequestError("Campaign does not exist");
+      throw new BadRequestError('Campaign does not exist');
     }
 
     await campaign.destroy();
@@ -91,7 +92,7 @@ class CampaignController {
     });
 
     if (!campaign) {
-      throw new BadRequestError("Campaign does not exist");
+      throw new BadRequestError('Campaign does not exist');
     }
 
     let nextOrder = 1;
@@ -110,25 +111,14 @@ class CampaignController {
   };
 
   static updateStep = async (req, res) => {
-    const campaign = await db.Campaign.findOne({
+    const step = await db.Step.findOne({
       where: {
-        id: req.params.id,
-        userId: req.currentUser.id
-      },
-      include: {
-        model: db.Step,
-        required: false,
-        where: {
-          order: req.params.order
-        }
+        campaignId: req.params.id,
+        order: req.params.order
       }
     });
 
-    if (!campaign) throw new BadRequestError("Campaign does not exist");
-
-    const step = campaign.Steps[0];
-
-    if (!step) throw new BadRequestError("Step does not exist");
+    if (!step) throw new BadRequestError('Step does not exist');
 
     const updatedStep = await step.update({
       subject: req.body.subject,
