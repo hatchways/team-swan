@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
-import { Redirect } from 'react-router-dom';
+import { Redirect } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import UploadCSV from "./steps/UploadCSV";
 import { Container } from "@material-ui/core";
@@ -13,7 +13,10 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import MapCSV from "./steps/MapCSV";
 import withAuth from "common/withAuth";
 import AddProspects from "./steps/AddProspects";
-import { Connector, ColorStepIcon } from 'pages/importProspects/component/StepsHeader'
+import {
+  Connector,
+  ColorStepIcon,
+} from "pages/importProspects/component/StepsHeader";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,50 +31,53 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-
 function getSteps() {
   return ["Upload a csv file", "Map csv to users", "Create prospects"];
 }
 
-function getStepContent(step, props) {
+function getStepContent(step, propsToSend) {
   switch (step) {
     case 0:
       return (
         <div>
-          <UploadCSV setFile={props.setFile}></UploadCSV>
+          <UploadCSV setFile={propsToSend.setFile}></UploadCSV>
         </div>
       );
     case 1:
       return (
         <div>
-          <MapCSV properties={props.properties}
-            attributes={props.attributes}
-            tableHead={props.tableHead}
-            mappedAttributes={props.mappedAttributes}
-            setMappedAttributes={props.setMappedAttributes}></MapCSV>
+          <MapCSV
+            properties={propsToSend.properties}
+            attributes={propsToSend.attributes}
+            tableHead={propsToSend.tableHead}
+            mappedAttributes={propsToSend.mappedAttributes}
+            setMappedAttributes={propsToSend.setMappedAttributes}
+          ></MapCSV>
         </div>
       );
     case 2:
-      return <AddProspects
-        mappedAttributes={props.mappedAttributes}
-        setActiveStep={props.setActiveStep}
-        filename={props.filename}></AddProspects>;
+      return (
+        <AddProspects
+          mappedAttributes={propsToSend.mappedAttributes}
+          setActiveStep={propsToSend.setActiveStep}
+          filename={propsToSend.filename}
+        ></AddProspects>
+      );
     default:
       return "Unknown step";
   }
 }
 
-const ImportProspects = () => {
+const ImportProspects = (props) => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [file, setFile] = React.useState([]);
   const steps = getSteps();
   const [isLoading, setLoading] = React.useState(false);
   const [properties, setProperties] = React.useState([]);
-  const [attributes, setAttributes] = React.useState([])
-  const [mappedAttributes, setMappedAttributes] = React.useState({})
-  const [filename, setFilename] = React.useState(null)
+  const [attributes, setAttributes] = React.useState([]);
+  const [mappedAttributes, setMappedAttributes] = React.useState({});
+  const [filename, setFilename] = React.useState(null);
   const showSnackbar = useSnackBar();
 
   const prevFile = React.useRef();
@@ -95,8 +101,8 @@ const ImportProspects = () => {
 
         try {
           const request = await axios.post("/api/upload", formData, config);
-          setMappedAttributes({})
-          setFilename(request.data.filename)
+          setMappedAttributes({});
+          setFilename(request.data.filename);
           setProperties(request.data.properties);
           setAttributes(request.data.attributes);
           setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -105,7 +111,9 @@ const ImportProspects = () => {
         } catch (err) {
           setLoading(false);
           showSnackbar(
-            err.response && err.response.data.errors ? err.response.data.errors[0].message : "Error!",
+            err.response && err.response.data.errors
+              ? err.response.data.errors[0].message
+              : "Error!",
             "error"
           );
         }
@@ -117,32 +125,31 @@ const ImportProspects = () => {
 
   React.useEffect(() => {
     if (attributes.length !== 0 && mappedAttributes) {
-      let moveToFinalization = true
-      attributes.forEach(attr => {
+      let moveToFinalization = true;
+      attributes.forEach((attr) => {
         if (!mappedAttributes[attr]) {
-          moveToFinalization = false
+          moveToFinalization = false;
         }
-      })
+      });
       if (moveToFinalization) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
     }
-  }, [attributes, mappedAttributes])
-
+  }, [attributes, mappedAttributes]);
 
   React.useEffect(() => {
     prevFile.current = file;
   }, [file]);
 
-  const props = {
+  const propsToSend = {
     setFile: setFile,
     properties: properties,
-    tableHead: ['OUR PROSPECT FIELDS', 'IMPORT DATA HEADER'],
+    tableHead: ["OUR PROSPECT FIELDS", "IMPORT DATA HEADER"],
     attributes: attributes,
     setMappedAttributes: setMappedAttributes,
     mappedAttributes: mappedAttributes,
     setActiveStep: setActiveStep,
-    filename: filename
+    filename: filename,
   };
 
   return (
@@ -161,25 +168,22 @@ const ImportProspects = () => {
       <Container>
         <div>
           {activeStep === steps.length ? (
-            <div>
-              <Redirect to="/campaigns"></Redirect>
-            </div>
+            <div>{props.history.push("/prospects")}</div>
           ) : (
-              <div>
-                <Typography className={classes.instructions} component={"div"}>
-                  {isLoading ? (
-                    <LinearProgress />
-                  ) : (
-                      getStepContent(activeStep, props)
-                    )}
-                </Typography>
-
-              </div>
-            )}
+            <div>
+              <Typography className={classes.instructions} component={"div"}>
+                {isLoading ? (
+                  <LinearProgress />
+                ) : (
+                  getStepContent(activeStep, propsToSend)
+                )}
+              </Typography>
+            </div>
+          )}
         </div>
       </Container>
     </div>
   );
-}
+};
 
 export default withAuth(ImportProspects);

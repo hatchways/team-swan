@@ -1,18 +1,17 @@
 const db = require("../../database/models/index");
 const BadRequestError = require("../errors/bad-request-error");
-const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 class ProspectController {
   // The userProspects route controller
   static userProspects = async (req, res) => {
-    console.log("prospect controller")
+    console.log("prospect controller");
     const { id } = req.params;
-    
+
     const user = await db.User.findOne({
       where: {
-        id
-      }
+        id,
+      },
     });
 
     if (!user) {
@@ -28,16 +27,15 @@ class ProspectController {
     const { id } = req.params;
     const { status } = req.body;
 
-
     const prospect = await db.Prospect.findOne({
       where: {
-        id
-      }
+        id,
+      },
     });
     const user = await db.User.findOne({
       where: {
-        id
-      }
+        id,
+      },
     });
 
     if (!prospect) {
@@ -61,8 +59,8 @@ class ProspectController {
 
     const prospect = await db.Prospect.findOne({
       where: {
-        id
-      }
+        id,
+      },
     });
 
     if (!prospect) {
@@ -71,7 +69,7 @@ class ProspectController {
 
     try {
       const result = await prospect.destroy();
-      console.log(result)
+      console.log(result);
       return res.status(200).send(`Prospect with id ${id} deleted`);
     } catch (err) {
       throw new BadRequestError("Prospect deletion failed");

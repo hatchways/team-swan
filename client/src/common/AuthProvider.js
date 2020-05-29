@@ -36,6 +36,14 @@ const AuthProvider = ({ children }) => {
       });
   };
 
+  // const hasGmailAuthorized = async () => {
+  //   try{
+
+  //   }catch(err){
+
+  //   }
+  // };
+
   return (
     <AuthContext.Provider
       value={{ user, isAuthenticated, setUser, validateAuthCookie, logout }}
