@@ -21,7 +21,8 @@ const AuthProvider = ({ children }) => {
           !user ||
           user.firstName !== userData.firstName ||
           user.lastName !== userData.lastName ||
-          user.image !== userData.image
+          user.image !== userData.image ||
+          user.hasGmailAuthorized !== userData.hasGmailAuthorized
         ) {
           setUser(userData);
         }
@@ -32,14 +33,6 @@ const AuthProvider = ({ children }) => {
         }
       });
   };
-
-  // const hasGmailAuthorized = async () => {
-  //   try{
-
-  //   }catch(err){
-
-  //   }
-  // };
 
   return (
     <AuthContext.Provider value={{ user, setUser, validateAuthCookie, logout }}>
