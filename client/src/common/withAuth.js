@@ -4,9 +4,7 @@ import { Redirect } from "react-router";
 
 const withAuth = (Component, shouldRedirectToLogin = true) => {
   const HighOrderComponent = (props) => {
-    const { user, validateAuthCookie, logout, isAuthenticated } = useContext(
-      AuthContext
-    );
+    const { user, validateAuthCookie, logout } = useContext(AuthContext);
 
     useEffect(() => {
       validateAuthCookie();
