@@ -1,11 +1,11 @@
 import React from "react";
 import withAuth from "common/withAuth";
 import Drawer from "common/Drawer";
-import CustomizedTable from "pages/prospects/prospectsPageComponents/Table";
+import CustomizedTable from "./component/Table";
 import axios from "axios";
 import { Container, Grid, Typography, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import SearchSection from "pages/prospects/prospectsPageComponents/SearchSection";
+import SearchSection from "./component/SearchSection";
 
 const useStyles = makeStyles((theme) => ({
   rootContainer: {
