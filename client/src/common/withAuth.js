@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from 'react';
-import { AuthContext } from './AuthProvider';
-import { Redirect } from 'react-router';
+import React, { useContext, useEffect } from "react";
+import { AuthContext } from "./AuthProvider";
+import { Redirect } from "react-router";
 
 const withAuth = (Component, shouldRedirectToLogin = true) => {
   const HighOrderComponent = (props) => {
@@ -12,11 +12,11 @@ const withAuth = (Component, shouldRedirectToLogin = true) => {
       validateAuthCookie();
     }, []);
 
-    if (isAuthenticated || !shouldRedirectToLogin) {
+    if (user || !shouldRedirectToLogin) {
       return (
         <Component
           {...props}
-          isAuthenticated={isAuthenticated}
+          isAuthenticated={user ? true : false}
           user={user}
           logout={logout}
           validateAuthCookie={validateAuthCookie}
