@@ -73,18 +73,20 @@ function ConfirmationDialog(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
 
+  const prevId = React.useRef();
+
   React.useEffect(() => {
-    const checkAuthorized = async () => {
-      const hasGmailAuthorized = (await axios.get("/gmail/authenticated")).data
-        .message;
-      console.log(hasGmailAuthorized);
-      setOpen(!hasGmailAuthorized);
-    };
-    checkAuthorized();
-  }, [props.user]);
+    if (prevId.current !== props.user.id) {
+      setOpen(!props.user.hasGmailAuthorized);
+    }
+  }, [props.user.hasGmailAuthorized, props.user.id]);
+
+  React.useEffect(() => {
+    prevId.current = props.user.id;
+  }, [props.user.id]);
 
   const handleClose = () => {
-    props.logout();
+    setOpen(false);
   };
 
   const handleAgree = () => {
