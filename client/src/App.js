@@ -5,11 +5,13 @@ import Login from "./pages/login";
 import Signup from "./pages/signup";
 import withAuth from "common/withAuth";
 import Campaigns from "./pages/campaigns";
+import Campaign from "./pages/campaigns";
 import Prospects from "./pages/prospects";
 import Templates from "./pages/templates";
 import Reporting from "./pages/reporting";
 import {
   campaigns,
+  campaign,
   prospects,
   templates,
   reporting,
@@ -26,6 +28,7 @@ function App({ isAuthenticated }) {
         <Route path="/gmailauth" component={AuthRoute}></Route>
         <Route path={importProspects} component={ImportProspects} />
         <Route path={prospects} component={Prospects}></Route>
+        <Route path={campaign} component={Campaign} />
         <Route path={campaigns} component={Campaigns} />
         <Route path={reporting} component={Reporting} />
         <Route path={templates} component={Templates} />
