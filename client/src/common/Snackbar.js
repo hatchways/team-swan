@@ -13,7 +13,6 @@ const useStyles = makeStyles({
   snackbarContentError: {
     backgroundColor: (props) =>
       props.type === "error" ? "#cc3300" : "#4fbe75",
-    height: "5rem"
   },
   icon: {
     marginRight: "10px"

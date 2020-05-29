@@ -111,23 +111,12 @@ class CampaignController {
   };
 
   static updateStep = async (req, res) => {
-    const campaign = await db.Campaign.findOne({
+    const step = await db.Step.findOne({
       where: {
-        id: req.params.id,
-        userId: req.currentUser.id
-      },
-      include: {
-        model: db.Step,
-        required: false,
-        where: {
-          order: req.params.order
-        }
+        campaignId: req.params.id,
+        order: req.params.order
       }
     });
-
-    if (!campaign) throw new BadRequestError('Campaign does not exist');
-
-    const step = campaign.Steps[0];
 
     if (!step) throw new BadRequestError('Step does not exist');
 

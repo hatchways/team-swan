@@ -14,7 +14,7 @@
 const CustomError = require("../errors/custom-error");
 
 const errorHandler = (err, req, res, next) => {
-  
+
   // Check if the error extends the CustomError Class which would make it an instance of it
   if (err instanceof CustomError) {
     return res.status(err.statusCode).send({

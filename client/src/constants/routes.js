@@ -3,3 +3,4 @@ export const campaigns = "/campaign";
 export const prospects = "/prospect";
 export const templates = "/template";
 export const reporting = "/reporting";
+export const importProspects = '/prospects/import'

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect } from 'react';
 import MainLayout from './pages/mainlayout';
 import { Route, Switch, Redirect } from 'react-router-dom';
@@ -16,16 +17,36 @@ import {
   templates,
   reporting
 } from 'constants/routes';
+=======
+import React, { useEffect } from "react";
+import MainLayout from "./pages/mainlayout";
+import { Route, Switch, Redirect } from "react-router-dom";
+import Login from "./pages/login";
+import Signup from "./pages/signup";
+import withAuth from "common/withAuth";
+import Campaigns from "./pages/campaigns";
+import Prospects from "./pages/prospects";
+import Templates from "./pages/templates";
+import Reporting from "./pages/reporting";
+import { campaigns, prospects, templates, reporting, importProspects } from "constants/routes";
+import ImportProspects from "./pages/importProspects";
+>>>>>>> dev
 
 function App({ isAuthenticated }) {
   return (
     <MainLayout>
       <Switch>
+<<<<<<< HEAD
         <Route path={prospects} component={Prospects} />
         <Route path={campaign} component={Campaign} />
+=======
+        <Route path={importProspects} component={ImportProspects} />
+        <Route path={prospects} component={Prospects}></Route>
+>>>>>>> dev
         <Route path={campaigns} component={Campaigns} />
         <Route path={reporting} component={Reporting} />
         <Route path={templates} component={Templates} />
+
         <Route
           path="/login"
           render={(props) =>
@@ -38,8 +59,8 @@ function App({ isAuthenticated }) {
             isAuthenticated ? (
               <Redirect to={campaigns} />
             ) : (
-              <Signup {...props} />
-            )
+                <Signup {...props} />
+              )
           }
         />
       </Switch>

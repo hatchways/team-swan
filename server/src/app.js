@@ -8,6 +8,7 @@ const errorHandler = require("./middleware/error-handler");
 const cookieSession = require("cookie-session");
 
 const userAuthRoute = require("./routes/user-auth");
+const uploadRoute = require("./routes/upload-routes");
 const prospectsRoute = require("./routes/prospect");
 const campaignRoute = require("./routes/campaign");
 
@@ -29,6 +30,7 @@ app.use(express.static(join(__dirname, "public")));
 
 // User routes
 app.use(userAuthRoute);
+app.use(uploadRoute)
 app.use(prospectsRoute);
 app.use(campaignRoute);
 app.use(errorHandler);
