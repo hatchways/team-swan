@@ -22,6 +22,7 @@ import getDecorator from './config/getDecorator';
 import getMediaBlockRenderer from './config/getMediaBlockRenderer';
 import customInlineStyle from './config/customInlineStyles';
 import 'draft-js/dist/Draft.css';
+import { convertToHtml, convertFromHtml } from './config/convertHtml';
 
 const useStyles = makeStyles({
   editorContainer: {
@@ -38,6 +39,9 @@ const TemplateEditor = ({ rawContent }, ref) => {
   const [editorState, setEditorState] = useState(
     EditorState.createEmpty(getDecorator())
   );
+
+  //SAMPLE DELETE LATER
+  const [html, setHtml] = useState('');
 
   const { editorContainer } = useStyles();
   const editorContainerRef = useRef();
@@ -207,6 +211,28 @@ const TemplateEditor = ({ rawContent }, ref) => {
           onChange={updateEditor}
         />
       </div>
+
+      <button
+        onClick={() => {
+          const html = convertToHtml(editorState.getCurrentContent());
+          console.log(html);
+          setHtml(html);
+        }}
+      >
+        Get Html
+      </button>
+
+      <button
+        onClick={() => {
+          let contentState = convertFromHtml(html);
+          updateEditor(
+            EditorState.push(editorState, contentState, 'insert-characters')
+          );
+        }}
+      >
+        Import Html
+      </button>
+
       <EditorToolbar
         toggleFontStyle={toggleFontStyle}
         toggleFontFamily={toggleFontFamily}
