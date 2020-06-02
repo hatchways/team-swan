@@ -5,7 +5,7 @@ import Login from "./pages/login";
 import Signup from "./pages/signup";
 import withAuth from "common/withAuth";
 import Campaigns from "./pages/campaigns";
-import Campaign from "./pages/campaigns";
+import Campaign from "./pages/campaign";
 import Prospects from "./pages/prospects";
 import Templates from "./pages/templates";
 import Reporting from "./pages/reporting";
@@ -19,7 +19,6 @@ import {
 } from "constants/routes";
 import ImportProspects from "./pages/importProspects";
 import AuthRoute from "pages/gmailAuth/AuthRoute";
-import Gmail from "pages/gmailAuth/Gmail";
 
 function App({ isAuthenticated }) {
   return (
@@ -45,8 +44,8 @@ function App({ isAuthenticated }) {
             isAuthenticated ? (
               <Redirect to={campaigns} />
             ) : (
-              <Signup {...props} />
-            )
+                <Signup {...props} />
+              )
           }
         />
       </Switch>
