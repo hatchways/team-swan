@@ -21,7 +21,7 @@ export default ({ mappedAttributes, setActiveStep, filename }) => {
     }
 
     return (
-        <Button variant="contained" size="large" onClick={onclick}>
+        <Button variant="contained" size="large" color="primary" onClick={onclick}>
             Add Prospects
         </Button>
     )
