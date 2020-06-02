@@ -19,7 +19,7 @@ const Auth = (props) => {
           props.history.push("/");
         }
       } catch (error) {
-        showSnackBar("Failed to Authenticate");
+        showSnackBar("Failed to Authenticate", 'error');
       }
     };
     checkAuth();
