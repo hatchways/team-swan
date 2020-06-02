@@ -1,7 +1,6 @@
 import React from "react";
 import axios from "axios";
 import queryString from "query-string";
-import withAuth from "common/withAuth";
 import useSnackbar from "common/useSnackbar";
 
 // A Route that responds when OAuth redirects the user back to our application
