@@ -175,7 +175,7 @@ export default function CustomPaginationActionsTable(props) {
               <TableRow key={row.id}>
                 <TableCell>{index + 1}</TableCell>
                 {tableBodyData.map((tableBodyData) => {
-                  return <TableCell key={index}>{row[tableBodyData]}</TableCell>;
+                  return <TableCell key={row[tableBodyData]}>{row[tableBodyData]}</TableCell>;
                 })}
               </TableRow>
             ))}
