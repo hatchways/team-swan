@@ -91,9 +91,16 @@ const TemplateEditor = ({ rawContent }, ref) => {
     let newEditorState = editorState;
 
     //Toggling off other font sizes
-    Object.keys(fontSizes).forEach((fontSize) => {
-      if (newEditorState.getCurrentInlineStyle().has(fontSize)) {
-        newEditorState = RichUtils.toggleInlineStyle(newEditorState, fontSize);
+    Object.keys(fontSizes).forEach((fontSizeProperty) => {
+      if (
+        newEditorState
+          .getCurrentInlineStyle()
+          .has(fontSizes[fontSizeProperty].value)
+      ) {
+        newEditorState = RichUtils.toggleInlineStyle(
+          newEditorState,
+          fontSizes[fontSizeProperty].value
+        );
       }
     });
 
@@ -104,9 +111,16 @@ const TemplateEditor = ({ rawContent }, ref) => {
     let newEditorState = editorState;
 
     //Toggling off other font family
-    Object.keys(fontFamily).forEach((fontSize) => {
-      if (newEditorState.getCurrentInlineStyle().has(fontSize)) {
-        newEditorState = RichUtils.toggleInlineStyle(newEditorState, fontSize);
+    Object.keys(fontFamily).forEach((fontFamilyProperty) => {
+      if (
+        newEditorState
+          .getCurrentInlineStyle()
+          .has(fontFamily[fontFamilyProperty].value)
+      ) {
+        newEditorState = RichUtils.toggleInlineStyle(
+          newEditorState,
+          fontFamily[fontFamilyProperty].value
+        );
       }
     });
 
