@@ -21,7 +21,8 @@ const AuthProvider = ({ children }) => {
           !user ||
           user.firstName !== userData.firstName ||
           user.lastName !== userData.lastName ||
-          user.image !== userData.image
+          user.image !== userData.image ||
+          user.hasGmailAuthorized !== userData.hasGmailAuthorized
         ) {
           setUser(userData);
         }

@@ -127,6 +127,19 @@ class CampaignController {
 
     res.send(updatedStep);
   };
+
+  static getStep = async (req, res) => {
+    const step = await db.Step.findOne({
+      where: {
+        order: req.params.order,
+        campaignId: req.currentUser.id
+      }
+    });
+
+    if (!step) throw new BadRequestError('Step does not exist');
+
+    res.send(step);
+  };
 }
 
 module.exports = CampaignController;
