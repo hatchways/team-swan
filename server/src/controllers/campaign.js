@@ -129,8 +129,7 @@ class CampaignController {
   static updateStep = async (req, res) => {
     const step = await db.Step.findOne({
       where: {
-        campaignId: req.params.id,
-        order: req.params.order,
+        id: req.params.id,
       },
     });
 
@@ -147,8 +146,7 @@ class CampaignController {
   static getStep = async (req, res) => {
     const step = await db.Step.findOne({
       where: {
-        order: req.params.order,
-        campaignId: req.currentUser.id,
+        id: req.params.id,
       },
     });
 

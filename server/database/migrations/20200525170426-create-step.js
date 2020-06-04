@@ -2,49 +2,53 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
     queryInterface.createTable("Steps", {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
       order: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        primaryKey: true
       },
       campaignId: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        primaryKey: true,
         references: {
           model: "Campaigns",
-          key: "id"
-        }
+          key: "id",
+        },
       },
       subject: {
         allowNull: false,
         type: Sequelize.STRING,
         validate: {
           notEmpty: {
-            msg: '"Subject" is required'
-          }
-        }
+            msg: '"Subject" is required',
+          },
+        },
       },
       body: {
         allowNull: false,
         type: Sequelize.TEXT,
         validate: {
           notEmpty: {
-            msg: '"Body" is required'
-          }
-        }
+            msg: '"Body" is required',
+          },
+        },
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     }),
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable("Steps");
-  }
+  },
 };

@@ -66,9 +66,10 @@ const Campaign = ({ user }) => {
     });
   };
 
-  const openUpdateStepEditor = (order) => {
+  const openUpdateStepEditor = (order, id) => {
     setStepEditorValues({
       open: true,
+      id: id,
       order: order,
       type: "update",
     });
@@ -127,9 +128,10 @@ const Campaign = ({ user }) => {
           },
         ]}
       />
-      {campaignInfo.Steps.map(({ subject, order, contacted, replied }) => (
+      {campaignInfo.Steps.map(({ id, subject, order, contacted, replied }) => (
         <Step
-          key={order}
+          key={id}
+          id={id}
           subject={subject}
           userName={`${user.firstName} ${user.lastName}`}
           openUpdateStepEditor={openUpdateStepEditor}
@@ -160,6 +162,7 @@ const Campaign = ({ user }) => {
       </Button>
 
       <StepEditorDialog
+        id={stepEditorValues.id}
         open={stepEditorValues.open}
         order={stepEditorValues.order}
         campaignId={campaignInfo.id}

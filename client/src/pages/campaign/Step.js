@@ -1,47 +1,41 @@
-import React, { useEffect } from 'react';
-import { makeStyles, Grid, Typography, Paper } from '@material-ui/core';
-import { Mail as MailIcon } from '@material-ui/icons';
-import { toSentenceCase } from 'js-convert-case';
+import React, { useEffect } from "react";
+import { makeStyles, Grid, Typography, Paper } from "@material-ui/core";
+import { Mail as MailIcon } from "@material-ui/icons";
+import { toSentenceCase } from "js-convert-case";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    width: '100%',
-    margin: '2.5rem 0 2.5rem 0',
-    padding: '2.5rem 0 2.5rem 0',
-    cursor: 'pointer'
+    width: "100%",
+    margin: "2.5rem 0 2.5rem 0",
+    padding: "2.5rem 0 2.5rem 0",
+    cursor: "pointer",
   },
   stepInfoContainer: {
-    paddingLeft: '3rem'
+    paddingLeft: "3rem",
   },
   owner: {
-    color: theme.palette.grey[400]
+    color: theme.palette.grey[400],
   },
   dataSummaryContainer: {
-    width: '10rem'
+    width: "10rem",
   },
   dataLabel: {
-    fontSize: '13px'
+    fontSize: "13px",
   },
   dataNumber: {
     fontWeight: theme.typography.fontWeightLight,
-    marginTop: '7px'
-  }
+    marginTop: "7px",
+  },
 }));
 
-const DataSummary = ({
-  subject,
-  userName,
-  order,
-  data,
-  openUpdateStepEditor
-}) => {
+const Step = ({ subject, userName, order, data, openUpdateStepEditor, id }) => {
   const {
     container,
     stepInfoContainer,
     owner,
     dataSummaryContainer,
     dataLabel,
-    dataNumber
+    dataNumber,
   } = useStyles();
 
   return (
@@ -50,7 +44,7 @@ const DataSummary = ({
       item
       container
       component={Paper}
-      onClick={() => openUpdateStepEditor(order)}
+      onClick={() => openUpdateStepEditor(order, id)}
     >
       <Grid
         item
@@ -99,4 +93,4 @@ const DataSummary = ({
   );
 };
 
-export default DataSummary;
+export default Step;
