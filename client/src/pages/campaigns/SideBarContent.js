@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   makeStyles,
   InputAdornment,
@@ -18,13 +18,16 @@ const useStyles = makeStyles((theme) => ({
 const SideBarContent = ({ searchCampaignName, setSearchCampaignName }) => {
   const { filterSearch } = useStyles();
 
+  useEffect(() => {
+    console.log("hello");
+  }, []);
+
   return (
     <Container>
       <FormControl fullWidth className={filterSearch} variant="outlined">
         <InputLabel htmlFor="outlined-adornment-email">Search</InputLabel>
         <OutlinedInput
-          autoComplete={"off"}
-          id="outlined-adornment-amount"
+          autoFocus
           value={searchCampaignName}
           onChange={(e) => setSearchCampaignName(e.target.value)}
           startAdornment={

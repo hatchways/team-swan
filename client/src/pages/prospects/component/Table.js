@@ -124,22 +124,17 @@ export default function CustomPaginationActionsTable(props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const search = React.useContext(SearchContext).state.inputText;
-  const prevSearch = React.useRef();
 
   let rows = props.prospectData;
   const [filteredData, setFilteredData] = React.useState(rows);
   React.useEffect(() => {
-    if (prevSearch.current !== search && props.prospectData.length !== 0) {
+    if (props.prospectData.length !== 0) {
       const newData = props.prospectData.filter((prospect) => {
         return prospect.email.includes(search);
       });
       setFilteredData(newData);
     }
   }, [props.prospectData, search]);
-
-  React.useEffect(() => {
-    prevSearch.current = search;
-  }, [search]);
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);

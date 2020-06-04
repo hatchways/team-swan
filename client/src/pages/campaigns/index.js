@@ -49,20 +49,22 @@ const Campaigns = () => {
   return (
     <>
       <Drawer
-        LeftDrawerComponent={() => (
+        LeftDrawerComponent={
           <SideBarContent
+            key="sidebar"
             searchCampaignName={searchCampaignName}
             setSearchCampaignName={setSearchCampaignName}
           />
-        )}
-        RightDrawerComponent={() => (
+        }
+        RightDrawerComponent={
           <Content
+            key="content"
             openCreateCampaignDialog={() => setIsCreateDialogOpen(true)}
             filteredData={filteredData}
             isDataLoading={isDataLoading}
           />
-        )}
-      ></Drawer>
+        }
+      />
       <CreateCampaignDialog
         open={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}

@@ -1,5 +1,4 @@
 import React from "react";
-import withAuth from "common/withAuth";
 import Table from "common/Table";
 import {
   makeStyles,
