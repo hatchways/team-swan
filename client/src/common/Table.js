@@ -47,7 +47,6 @@ const Table = ({ data, renderRowHeader, renderRowData }) => {
 
   //Paginate the data
   useEffect(() => {
-    console.log(page);
     const startPosition = page * rowsPerPage;
     const endPosition = page * rowsPerPage + rowsPerPage;
     const paginatedData = data.slice(startPosition, endPosition);

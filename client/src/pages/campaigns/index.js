@@ -18,10 +18,6 @@ const Campaigns = () => {
   const showSnackbar = useSnackbar();
 
   useEffect(() => {
-    console.log("render");
-  });
-
-  useEffect(() => {
     getCampaigns();
   }, []);
 

@@ -83,6 +83,7 @@ const Campaigns = ({
           renderRowData={(data) => (
             <TableRow
               className={tableRow}
+              key={data.id}
               hover
               component={Link}
               to={`/campaigns/${data.id}`}
