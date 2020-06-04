@@ -61,37 +61,42 @@ const Prospects = (props) => {
     prevId.current = id;
   }, [id]);
 
-  const left = <SearchSection />;
+  const left = () => <SearchSection></SearchSection>;
 
-  const content = (
-    <div>
-      <Container className={classes.rootContainer}>
-        <div>
-          <Grid container spacing={3}>
-            <Grid item xs={9} className={classes.gridElement}>
-              <Typography variant="h4">Prospects</Typography>
+  const right = () => {
+    return (
+      <div>
+        <Container className={classes.rootContainer}>
+          <div>
+            <Grid container spacing={3}>
+              <Grid item xs={9} className={classes.gridElement}>
+                <Typography variant="h4">Prospects</Typography>
+              </Grid>
+              <Grid className={classes.gridElement} justify={"flex-end"}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  color="primary"
+                  onClick={() => props.history.push("/prospects/import")}
+                >
+                  Import Prospects
+                </Button>
+              </Grid>
             </Grid>
-            <Grid className={classes.gridElement} justify={"flex-end"}>
-              <Button
-                variant="contained"
-                size="large"
-                color="primary"
-                onClick={() => props.history.push("/prospects/import")}
-              >
-                Import Prospects
-              </Button>
-            </Grid>
-          </Grid>
-        </div>
-      </Container>
-      <CustomizedTable prospectData={prospectData}></CustomizedTable>
-    </div>
-  );
+          </div>
+        </Container>
+        <CustomizedTable prospectData={prospectData}></CustomizedTable>
+      </div>
+    );
+  };
 
   return (
     <SearchContext.Provider value={{ state, dispatch }}>
       <div>
-        <Drawer LeftDrawerComponent={left}>{content}</Drawer>
+        <Drawer
+          LeftDrawerComponent={left}
+          RightDrawerComponent={right}
+        ></Drawer>
       </div>
     </SearchContext.Provider>
   );

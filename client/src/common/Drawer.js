@@ -39,7 +39,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ClippedDrawer({ LeftDrawerComponent, children }) {
+export default function ClippedDrawer({
+  LeftDrawerComponent,
+  RightDrawerComponent,
+}) {
   const classes = useStyles();
 
   const ref = React.useRef(null);
@@ -61,12 +64,12 @@ export default function ClippedDrawer({ LeftDrawerComponent, children }) {
       >
         <Toolbar />
         <div className={classes.drawerContainer} ref={ref}>
-          {LeftDrawerComponent}
+          <LeftDrawerComponent></LeftDrawerComponent>
         </div>
       </Drawer>
       <main className={classes.content}>
         {/* <Toolbar /> */}
-        {children}
+        <RightDrawerComponent></RightDrawerComponent>
       </main>
     </div>
   );

@@ -1,56 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   makeStyles,
   Grid,
   Typography,
   Button,
-  IconButton
-} from '@material-ui/core';
+  IconButton,
+} from "@material-ui/core";
 import {
   Mail as MailIcon,
   Cached as CachedIcon,
-  FlashOn as FlashIcon
-} from '@material-ui/icons';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import withAuth from 'common/withAuth';
-import DataSummary from './DataSummary';
-import Step from './Step';
-import StepEditorDialog from './StepEditorDialog';
+  FlashOn as FlashIcon,
+} from "@material-ui/icons";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import withAuth from "common/withAuth";
+import DataSummary from "./DataSummary";
+import Step from "./Step";
+import StepEditorDialog from "./StepEditorDialog";
+import { campaign } from "constants/routes";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    padding: '2rem'
+    padding: "2rem",
   },
   campaignTitleContainer: {
     flexGrow: 1,
-    '& h4': {
-      marginBottom: '8px'
+    "& h4": {
+      marginBottom: "8px",
     },
-    '& h6': {
-      color: theme.palette.grey[400]
-    }
+    "& h6": {
+      color: theme.palette.grey[400],
+    },
   },
   iconButton: {
     color: theme.palette.grey[400],
-    margin: '0 10px 0 10px'
+    margin: "0 10px 0 10px",
   },
   button: {
-    marginLeft: '10px',
-    width: '10rem'
-  }
+    marginLeft: "10px",
+    width: "10rem",
+  },
 }));
 
 const Campaign = ({ user }) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [campaignInfo, setCampaignInfo] = useState({
     id: null,
-    name: '',
-    Steps: []
+    name: "",
+    Steps: [],
   });
   const [stepEditorValues, setStepEditorValues] = useState({
     order: 1,
-    campaignId: campaignInfo.id
+    campaignId: campaignInfo.id,
   });
 
   //utils
@@ -61,7 +62,7 @@ const Campaign = ({ user }) => {
     setStepEditorValues({
       open: true,
       order: campaignInfo.Steps.length + 1,
-      type: 'create'
+      type: "create",
     });
   };
 
@@ -69,7 +70,7 @@ const Campaign = ({ user }) => {
     setStepEditorValues({
       open: true,
       order: order,
-      type: 'update'
+      type: "update",
     });
   };
 
@@ -83,7 +84,7 @@ const Campaign = ({ user }) => {
     <Grid container className={container}>
       <Grid item container>
         <Grid className={campaignTitleContainer}>
-          <Typography variant="h4">Nature interested prospects</Typography>
+          <Typography variant="h4">{campaignInfo.name}</Typography>
           <Typography variant="subtitle1">
             By {`${user.firstName} ${user.lastName}`}
           </Typography>
@@ -111,19 +112,19 @@ const Campaign = ({ user }) => {
       <DataSummary
         data={[
           {
-            label: 'Contacted',
+            label: "Contacted",
             value: campaignInfo.Steps.reduce(
               (accumulator, step) => accumulator + step.contacted,
               0
-            )
+            ),
           },
           {
-            label: 'Relpied',
+            label: "Relpied",
             value: campaignInfo.Steps.reduce(
               (accumulator, step) => accumulator + step.replied,
               0
-            )
-          }
+            ),
+          },
         ]}
       />
       {campaignInfo.Steps.map(({ subject, order, contacted, replied }) => (
@@ -135,13 +136,13 @@ const Campaign = ({ user }) => {
           order={order}
           data={[
             {
-              label: 'Contacted',
-              value: contacted
+              label: "Contacted",
+              value: contacted,
             },
             {
-              label: 'Replied',
-              value: replied
-            }
+              label: "Replied",
+              value: replied,
+            },
           ]}
         />
       ))}

@@ -8,6 +8,8 @@ import {
   TableCell,
   TableBody,
   TablePagination,
+  Typography,
+  Grid,
 } from "@material-ui/core";
 import { toSentenceCase } from "js-convert-case";
 
@@ -120,7 +122,13 @@ const Table = ({ data, renderRowHeader, renderRowData }) => {
             </MaterialTable>
           </Paper>
         </>
-      ) : null}
+      ) : (
+        <Grid container justify="center">
+          <Grid item>
+            <Typography>No Available Data</Typography>
+          </Grid>
+        </Grid>
+      )}
     </React.Fragment>
   );
 };
