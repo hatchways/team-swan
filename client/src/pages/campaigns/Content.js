@@ -76,6 +76,8 @@ const Campaigns = ({
           renderRowHeader={(data) => (
             <TableRow>
               <TableCell variant="head">Name</TableCell>
+              <TableCell variant="head">Steps</TableCell>
+              <TableCell variant="head">Prospects</TableCell>
               <TableCell variant="head">Created</TableCell>
             </TableRow>
           )}
@@ -88,6 +90,8 @@ const Campaigns = ({
               to={`/campaigns/${data.id}`}
             >
               <TableCell>{data.name}</TableCell>
+              <TableCell>{data.stepCount}</TableCell>
+              <TableCell>{data.prospectCount}</TableCell>
               <TableCell>{moment(data.createdAt).format("MMM d")}</TableCell>
             </TableRow>
           )}
