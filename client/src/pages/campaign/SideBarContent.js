@@ -113,7 +113,6 @@ const SideBarContent = () => {
             key={link.label}
             component={Link}
             classes={{ selected: tabSelected, root: tabRoot }}
-            value={link.value}
             icon={<FiberManualRecordIcon fontSize="small" />}
           />
         ))}
