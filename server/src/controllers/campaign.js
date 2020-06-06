@@ -8,25 +8,26 @@ class CampaignController {
       where: {
         userId: req.currentUser.id,
       },
-      include: [
-        {
-          model: db.Step,
-        },
-        {
-          model: db.Prospect,
-        },
-      ],
+      attributes: {
+        include: [
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "Steps" 
+              WHERE "Steps"."campaignId" = "Campaign"."id")`),
+            "stepCount",
+          ],
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "CampaignProspects" 
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id")`),
+            "prospectCount",
+          ],
+        ],
+      },
+      order: [["createdAt", "DESC"]],
     });
 
-    res.send(
-      campaigns.map((campaign) => ({
-        id: campaign.id,
-        name: campaign.name,
-        createAt: campaign.createdAt,
-        stepCount: campaign.Steps.length,
-        prospectCount: campaign.Prospects.length,
-      }))
-    );
+    res.send(campaigns);
   };
 
   static getCampaign = async (req, res) => {
@@ -35,7 +36,38 @@ class CampaignController {
         id: req.params.id,
         userId: req.currentUser.id,
       },
-      include: [db.Prospect, db.Step],
+      attributes: {
+        include: [
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "CampaignProspects" 
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" AND  "CampaignProspects"."state" = 'pending' )`),
+            "pendingCount",
+          ],
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "CampaignProspects" 
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" AND  "CampaignProspects"."state" = 'active' )`),
+            "activeCount",
+          ],
+        ],
+      },
+      include: [
+        { model: db.Prospect },
+        {
+          model: db.Step,
+          attributes: {
+            include: [
+              [
+                db.Sequelize.literal(`(
+                  SELECT COUNT(*) FROM "StepProspects" 
+                  WHERE "StepProspects"."stepId" = "Steps"."id" AND "StepProspects"."currentStep" = true)`),
+                "prospectCount",
+              ],
+            ],
+          },
+        },
+      ],
       order: [[db.Step, "order", "ASC"]],
     });
 
@@ -153,6 +185,94 @@ class CampaignController {
     if (!step) throw new BadRequestError("Step does not exist");
 
     res.send(step);
+  };
+
+  static movePropectsToStep = async (req, res) => {
+    const step = await db.Step.findOne({
+      where: {
+        id: req.params.stepId,
+      },
+    });
+
+    if (!step) throw new BadRequestError("Step does not exist");
+
+    // Get the campaign prospects that are in pending or in the previous steps
+    const campaignProspects = await db.CampaignProspect.findAll({
+      attributes: ["id"],
+      where: {
+        campaignId: req.params.campaignId,
+        [Op.or]: [
+          {
+            [Op.and]: [
+              { "$StepProspects.currentStep$": true },
+              { "$StepProspects.Step.order$": { [Op.lt]: step.order } },
+            ],
+          },
+          {
+            state: "pending",
+          },
+        ],
+      },
+      include: [
+        {
+          model: db.StepProspect,
+          attributes: [],
+          include: [{ model: db.Step, attributes: [] }],
+        },
+      ],
+    });
+
+    if (campaignProspects.length === 0)
+      throw new BadRequestError("No prospects on previous steps to move");
+
+    // Build Instances of step prospect model
+    const stepProspects = campaignProspects.map((campaignProspect) => {
+      return {
+        campaignProspectId: campaignProspect.id,
+        stepId: step.id,
+        contacted: false,
+        replied: false,
+        currentStep: true,
+      };
+    });
+
+    // Set prospect to next step
+    const newStepProspects = await db.StepProspect.bulkCreate(stepProspects, {
+      returning: true,
+    });
+
+    // Update campaign prospect from pending to active
+    await db.CampaignProspect.update(
+      { state: "active" },
+      {
+        where: {
+          id: {
+            [Op.in]: campaignProspects.map(
+              (campaignProspect) => campaignProspect.id
+            ),
+          },
+        },
+      }
+    );
+
+    // Update previous step currentStep to false
+    await db.StepProspect.update(
+      { currentStep: false },
+      {
+        where: {
+          campaignProspectId: {
+            [Op.in]: campaignProspects.map(
+              (campaignProspect) => campaignProspect.id
+            ),
+          },
+          stepId: {
+            [Op.not]: step.id,
+          },
+        },
+      }
+    );
+
+    res.send(campaignProspects);
   };
 }
 

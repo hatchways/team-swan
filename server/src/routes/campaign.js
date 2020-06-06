@@ -61,4 +61,10 @@ router.put(
 
 router.get("/api/step/:id", requireAuth, CampaignController.getStep);
 
+router.put(
+  "/api/campaign/:campaignId/step/:stepId",
+  requireAuth,
+  CampaignController.movePropectsToStep
+);
+
 module.exports = router;
