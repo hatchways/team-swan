@@ -4,7 +4,6 @@ module.exports = (sequelize, DataTypes) => {
     prospectId: {
       allowNull: false,
       type: DataTypes.INTEGER,
-      primaryKey: true,
       onDelete: "CASCADE",
       references: {
         model: "Prospects",
@@ -14,19 +13,9 @@ module.exports = (sequelize, DataTypes) => {
     campaignId: {
       allowNull: false,
       type: DataTypes.INTEGER,
-      primaryKey: true,
       onDelete: "CASCADE",
       references: {
         model: "Campaigns",
-        key: "id",
-      },
-    },
-    step: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-      onDelete: "SET NULL",
-      references: {
-        model: "Steps",
         key: "id",
       },
     },
@@ -41,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
+    threadId: {
+      allowNull: true,
+      type: DataTypes.STRING,
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -53,8 +46,10 @@ module.exports = (sequelize, DataTypes) => {
 
   CampaignProspect.associate = function (models) {
     CampaignProspect.belongsTo(models.Campaign, { foreignKey: "campaignId" });
-    CampaignProspect.belongsTo(models.Prospect, { foreignKey: "campaignId" });
-    CampaignProspect.belongsTo(models.Step, { foreignKey: "step" });
+    CampaignProspect.belongsTo(models.Prospect, { foreignKey: "prospectId" });
+    CampaignProspect.hasMany(models.StepProspect, {
+      foreignKey: "campaignProspectId",
+    });
   };
 
   return CampaignProspect;

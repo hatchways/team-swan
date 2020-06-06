@@ -43,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Step.associate = function (models) {
     Step.belongsTo(models.Campaign, { foreignKey: "campaignId" });
+    Step.hasMany(models.StepProspect, { foreignKey: "stepId" });
   };
   return Step;
 };
