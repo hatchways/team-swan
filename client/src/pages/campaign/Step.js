@@ -1,14 +1,22 @@
-import React, { useEffect } from "react";
-import { makeStyles, Grid, Typography, Paper } from "@material-ui/core";
-import { Mail as MailIcon } from "@material-ui/icons";
+import React, { useState } from "react";
+import {
+  makeStyles,
+  Grid,
+  Typography,
+  Paper,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@material-ui/core";
+import { Mail as MailIcon, MoreVert as MoreVertIcon } from "@material-ui/icons";
 import { toSentenceCase } from "js-convert-case";
+import { campaign } from "constants/routes";
 
 const useStyles = makeStyles((theme) => ({
   container: {
     width: "100%",
-    margin: "2.5rem 0 2.5rem 0",
+    margin: "1rem 0 1rem 0",
     padding: "2.5rem 0 2.5rem 0",
-    cursor: "pointer",
   },
   stepInfoContainer: {
     paddingLeft: "3rem",
@@ -26,9 +34,24 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: theme.typography.fontWeightLight,
     marginTop: "7px",
   },
+  optionsButton: {
+    width: "5rem",
+  },
 }));
 
-const Step = ({ subject, userName, order, data, openUpdateStepEditor, id }) => {
+const Step = ({
+  subject,
+  userName,
+  order,
+  data,
+  openUpdateStepEditor,
+  stepId,
+  campaignId,
+  moveProspectsToStep,
+}) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+
   const {
     container,
     stepInfoContainer,
@@ -36,16 +59,26 @@ const Step = ({ subject, userName, order, data, openUpdateStepEditor, id }) => {
     dataSummaryContainer,
     dataLabel,
     dataNumber,
+    optionsButton,
   } = useStyles();
 
+  const clickEditMenuHandler = () => {
+    openUpdateStepEditor(order, stepId);
+    setIsMenuOpen(false);
+  };
+
+  const clickMoveProspectMenuHandler = () => {
+    moveProspectsToStep(stepId, campaignId);
+    setIsMenuOpen(false);
+  };
+
+  const clickOptionsMenuHandler = (e) => {
+    setIsMenuOpen(true);
+    setMenuAnchor(e.currentTarget);
+  };
+
   return (
-    <Grid
-      className={container}
-      item
-      container
-      component={Paper}
-      onClick={() => openUpdateStepEditor(order, id)}
-    >
+    <Grid className={container} item container component={Paper}>
       <Grid
         item
         container
@@ -89,6 +122,29 @@ const Step = ({ subject, userName, order, data, openUpdateStepEditor, id }) => {
           </Typography>
         </Grid>
       ))}
+      <Grid
+        className={optionsButton}
+        item
+        container
+        justify="center"
+        alignItems="center"
+      >
+        <IconButton onClick={clickOptionsMenuHandler}>
+          <MoreVertIcon />
+        </IconButton>
+
+        <Menu
+          elevation={3}
+          anchorEl={menuAnchor}
+          open={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+        >
+          <MenuItem onClick={clickMoveProspectMenuHandler}>
+            Move Prospects
+          </MenuItem>
+          <MenuItem onClick={clickEditMenuHandler}>Edit</MenuItem>
+        </Menu>
+      </Grid>
     </Grid>
   );
 };
