@@ -3,66 +3,64 @@ import React, {
   useRef,
   useEffect,
   useImperativeHandle,
-  forwardRef
-} from 'react';
-import { makeStyles } from '@material-ui/core';
+  forwardRef,
+} from "react";
+import { makeStyles } from "@material-ui/core";
 import {
   Editor,
   EditorState,
   RichUtils,
-  convertToRaw,
-  convertFromRaw,
   Modifier,
   AtomicBlockUtils,
-  SelectionState
-} from 'draft-js';
-import EditorToolbar from './EditorToolbar';
-import { fontStyles, fontSizes, fontFamily } from './config/constants';
-import getDecorator from './config/getDecorator';
-import getMediaBlockRenderer from './config/getMediaBlockRenderer';
-import customInlineStyle from './config/customInlineStyles';
-import 'draft-js/dist/Draft.css';
-import { convertToHtml, convertFromHtml } from './config/convertHtml';
+  SelectionState,
+} from "draft-js";
+import EditorToolbar from "./EditorToolbar";
+import { fontStyles, fontSizes, fontFamily } from "./config/constants";
+import getDecorator from "./config/getDecorator";
+import getMediaBlockRenderer from "./config/getMediaBlockRenderer";
+import customInlineStyle from "./config/customInlineStyles";
+import "draft-js/dist/Draft.css";
+import { convertToHtml, convertFromHtml } from "./config/convertHtml";
 
 const useStyles = makeStyles({
   editorContainer: {
-    height: '350px',
-    maxWidth: '770px',
-    overflow: 'auto',
-    '&:hover': {
-      cursor: 'text'
-    }
-  }
+    height: "350px",
+    maxWidth: "770px",
+    overflow: "auto",
+    "&:hover": {
+      cursor: "text",
+    },
+  },
 });
 
-const TemplateEditor = ({ rawContent }, ref) => {
+const TemplateEditor = ({ htmlContent }, ref) => {
   const [editorState, setEditorState] = useState(
     EditorState.createEmpty(getDecorator())
   );
 
   //SAMPLE DELETE LATER
-  const [html, setHtml] = useState('');
+  const [html, setHtml] = useState("");
 
   const { editorContainer } = useStyles();
   const editorContainerRef = useRef();
 
   useEffect(() => {
-    if (rawContent) {
+    if (htmlContent) {
       setEditorState(
         EditorState.createWithContent(
-          convertFromRaw(rawContent),
+          convertFromHtml(htmlContent),
           getDecorator()
         )
       );
     }
-  }, [rawContent]);
+  }, [htmlContent]);
 
   useImperativeHandle(ref, () => ({
-    getRawContent
+    getHtmlContent,
   }));
 
-  const getRawContent = () => {
-    return convertToRaw(editorState.getCurrentContent());
+  const getHtmlContent = () => {
+    return convertToHtml(editorState.getCurrentContent());
   };
 
   //Set focus to the last text
@@ -76,7 +74,7 @@ const TemplateEditor = ({ rawContent }, ref) => {
       anchorKey: key,
       anchorOffset: length,
       focusKey: key,
-      focusOffset: length
+      focusOffset: length,
     });
 
     updateEditor(EditorState.forceSelection(editorState, newSelectionState));
@@ -135,12 +133,12 @@ const TemplateEditor = ({ rawContent }, ref) => {
   const addImage = (url) => {
     const contentState = editorState.getCurrentContent();
     const contentStateWithEntity = contentState.createEntity(
-      'IMAGE',
-      'IMUTABLE',
+      "IMAGE",
+      "IMUTABLE",
       {
         src: url,
         width: 30,
-        alignment: 'left'
+        alignment: "left",
       }
     );
 
@@ -149,21 +147,21 @@ const TemplateEditor = ({ rawContent }, ref) => {
     let newEditorState = EditorState.set(
       editorState,
       { currentContent: contentStateWithEntity },
-      'create-entity'
+      "create-entity"
     );
 
     updateEditor(
-      AtomicBlockUtils.insertAtomicBlock(newEditorState, entityKey, ' ')
+      AtomicBlockUtils.insertAtomicBlock(newEditorState, entityKey, " ")
     );
   };
 
   const addLink = (label, url) => {
     const contentState = editorState.getCurrentContent();
     const contentStateWithEntity = contentState.createEntity(
-      'LINK',
-      'IMUTABLE',
+      "LINK",
+      "IMUTABLE",
       {
-        href: url
+        href: url,
       }
     );
 
@@ -178,7 +176,7 @@ const TemplateEditor = ({ rawContent }, ref) => {
     );
 
     updateEditor(
-      EditorState.push(editorState, contentStateWithImage, 'insert-characters')
+      EditorState.push(editorState, contentStateWithImage, "insert-characters")
     );
   };
 
@@ -192,7 +190,7 @@ const TemplateEditor = ({ rawContent }, ref) => {
     ).find((property) => inlineStyles.has(fontFamily[property].value));
 
     if (!selectedFontFamilyProperty) {
-      newEditorState = RichUtils.toggleInlineStyle(newEditorState, 'ARIAL');
+      newEditorState = RichUtils.toggleInlineStyle(newEditorState, "ARIAL");
     }
 
     const selectedFontSizeProperty = Object.keys(fontSizes).find((property) =>
@@ -201,7 +199,7 @@ const TemplateEditor = ({ rawContent }, ref) => {
 
     //Select default font size
     if (!selectedFontSizeProperty) {
-      newEditorState = RichUtils.toggleInlineStyle(newEditorState, 'FONT12PX');
+      newEditorState = RichUtils.toggleInlineStyle(newEditorState, "FONT12PX");
     }
 
     setEditorState(newEditorState);
@@ -229,7 +227,6 @@ const TemplateEditor = ({ rawContent }, ref) => {
       <button
         onClick={() => {
           const html = convertToHtml(editorState.getCurrentContent());
-          console.log(html);
           setHtml(html);
         }}
       >
@@ -240,7 +237,7 @@ const TemplateEditor = ({ rawContent }, ref) => {
         onClick={() => {
           let contentState = convertFromHtml(html);
           updateEditor(
-            EditorState.push(editorState, contentState, 'insert-characters')
+            EditorState.push(editorState, contentState, "insert-characters")
           );
         }}
       >
