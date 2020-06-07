@@ -2,12 +2,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable("Tokens", {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER,
-      },
       access_token: {
         type: Sequelize.STRING,
       },
@@ -24,6 +18,7 @@ module.exports = {
         type: Sequelize.BIGINT,
       },
       userId: {
+        primaryKey: true,
         type: Sequelize.INTEGER,
       },
       createdAt: {

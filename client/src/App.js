@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import MainLayout from "./pages/mainlayout";
 import { Route, Switch, Redirect } from "react-router-dom";
 import Login from "./pages/login";
@@ -19,7 +19,6 @@ import {
 } from "constants/routes";
 import ImportProspects from "./pages/importProspects";
 import AuthRoute from "pages/gmailAuth/AuthRoute";
-import Gmail from "pages/gmailAuth/Gmail";
 
 function App({ isAuthenticated }) {
   return (
@@ -45,8 +44,8 @@ function App({ isAuthenticated }) {
             isAuthenticated ? (
               <Redirect to={campaigns} />
             ) : (
-              <Signup {...props} />
-            )
+                <Signup {...props} />
+              )
           }
         />
       </Switch>

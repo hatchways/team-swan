@@ -8,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
       scope: DataTypes.STRING,
       token_type: DataTypes.STRING,
       expiry_date: DataTypes.BIGINT,
-      userId: DataTypes.INTEGER,
+      userId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+      },
     },
     {}
   );

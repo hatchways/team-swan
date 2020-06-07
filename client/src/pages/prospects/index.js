@@ -1,11 +1,11 @@
 import React from "react";
 import withAuth from "common/withAuth";
 import Drawer from "common/Drawer";
-import CustomizedTable from "./prospectsPageComponents/SearchSection";
+import CustomizedTable from "pages/prospects/component/Table";
 import axios from "axios";
 import { Container, Grid, Typography, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import SearchSection from "./prospectsPageComponents/SearchSection";
+import SearchSection from "pages/prospects/component/SearchSection";
 
 const useStyles = makeStyles((theme) => ({
   rootContainer: {
@@ -74,7 +74,8 @@ const Prospects = (props) => {
               </Grid>
               <Grid className={classes.gridElement} justify={"flex-end"}>
                 <Button
-                  variant="outlined"
+                  variant="contained"
+                  size="large"
                   color="primary"
                   onClick={() => props.history.push("/prospects/import")}
                 >
