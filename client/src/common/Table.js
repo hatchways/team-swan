@@ -9,9 +9,11 @@ import {
   TableBody,
   TablePagination,
   Typography,
+  IconButton,
   Grid,
 } from "@material-ui/core";
 import { toSentenceCase } from "js-convert-case";
+import { ArrowRight, ArrowLeft } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   tableContainer: {
@@ -36,14 +38,47 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: "0  5px 5px 0",
     },
   },
+  paginationRoot: {
+    flexShrink: 0,
+    marginLeft: theme.spacing(2.5),
+    border: "1px solid",
+    borderColor: theme.palette.text.disabled,
+    borderRadius: 3 + "rem",
+  },
+  paginationIconButton: {
+    padding: 0,
+    "& > *": {
+      color: theme.palette.primary.light,
+    },
+  },
+  flexRoot: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  flexRootEnd: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  flexEnd: {
+    alignSelf: "flex-end",
+  },
 }));
 
-const Table = ({ data, renderRowHeader, renderRowData }) => {
+const Table = ({ data, renderRowHeader, renderRowData, SelectorComponent }) => {
   const [paginatedData, setPaginatedData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const { tableContainer, tableHead } = useStyles();
+  const {
+    tableContainer,
+    tableHead,
+    paginationRoot,
+    paginationIconButton,
+    flexRoot,
+    flexRootEnd,
+  } = useStyles();
 
   //Paginate the data
   useEffect(() => {
@@ -59,7 +94,37 @@ const Table = ({ data, renderRowHeader, renderRowData }) => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
+    console.log(event.target.value);
     setPage(0);
+  };
+
+  const CustomPaginationActionComponent = ({ count }) => {
+    const handleBackButtonClick = (event) => {
+      handleChangePage(event, page - 1);
+    };
+
+    const handleNextButtonClick = (event) => {
+      handleChangePage(event, page + 1);
+    };
+
+    return (
+      <div className={paginationRoot}>
+        <IconButton
+          disabled={page === 0}
+          onClick={handleBackButtonClick}
+          className={paginationIconButton}
+        >
+          <ArrowLeft />
+        </IconButton>
+        <IconButton
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          onClick={handleNextButtonClick}
+          className={paginationIconButton}
+        >
+          <ArrowRight />
+        </IconButton>
+      </div>
+    );
   };
 
   const renderHeader = () => {
@@ -83,9 +148,9 @@ const Table = ({ data, renderRowHeader, renderRowData }) => {
   };
 
   const renderRow = () => {
-    return paginatedData.map((dataObject) => {
+    return paginatedData.map((dataObject, index) => {
       if (renderRowData) {
-        return renderRowData(dataObject);
+        return renderRowData(dataObject, page * rowsPerPage + index);
       } else {
         return (
           <TableRow key={dataObject}>
@@ -105,15 +170,20 @@ const Table = ({ data, renderRowHeader, renderRowData }) => {
     <React.Fragment>
       {data.length !== 0 ? (
         <>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-            component="div"
-            count={data.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onChangePage={handleChangePage}
-            onChangeRowsPerPage={handleChangeRowsPerPage}
-          />
+          <div className={SelectorComponent ? flexRoot : flexRootEnd}>
+            {SelectorComponent && SelectorComponent}
+            <TablePagination
+              style={{ alignSelf: "flex-end" }}
+              rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+              component="div"
+              count={data.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+              ActionsComponent={CustomPaginationActionComponent}
+            />
+          </div>
           <Paper className={tableContainer} component={Paper}>
             <MaterialTable>
               <TableHead className={tableHead}>{renderHeader()}</TableHead>
