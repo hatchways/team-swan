@@ -75,6 +75,10 @@ class Gmail {
       return res.send({ message: false });
     }
   };
+
+  static emailResponse = async (req, res) => {
+    res.send("This is usng ngrok");
+  };
 }
 
 module.exports = Gmail;
