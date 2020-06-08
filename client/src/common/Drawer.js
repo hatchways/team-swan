@@ -64,12 +64,12 @@ export default function ClippedDrawer({
       >
         <Toolbar />
         <div className={classes.drawerContainer} ref={ref}>
-          <LeftDrawerComponent></LeftDrawerComponent>
+          {LeftDrawerComponent}
         </div>
       </Drawer>
       <main className={classes.content}>
         {/* <Toolbar /> */}
-        <RightDrawerComponent></RightDrawerComponent>
+        {RightDrawerComponent}
       </main>
     </div>
   );
