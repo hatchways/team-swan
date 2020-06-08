@@ -57,6 +57,7 @@ const EditorToolbar = ({
     const selectedFontFamilyProperty = Object.keys(
       fontFamily
     ).find((property) => inlineStyle.has(fontFamily[property].value));
+
     setFontFamilySelected(
       selectedFontFamilyProperty
         ? fontFamily[selectedFontFamilyProperty].label

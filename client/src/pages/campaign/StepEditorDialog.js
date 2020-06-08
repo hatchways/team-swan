@@ -55,44 +55,41 @@ const useStyles = makeStyles((theme) => ({
 
 const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
   const [subject, setSubject] = useState("");
-  const [bodyRawContent, setBodyRawContent] = useState("");
+  const [bodyHtmlContent, setBodyHtmlContent] = useState("");
 
   const templateEditorRef = useRef();
   const showSnackbar = useSnackbar();
 
   useEffect(() => {
-    console.log(id);
     if (type === "update") {
       axios
         .get(`/api/step/${id}`)
         .then((response) => {
           setSubject(response.data.subject);
-          setBodyRawContent(JSON.parse(response.data.body));
+          setBodyHtmlContent(response.data.body);
         })
         .catch((error) => {
           showSnackbar(error.response.data.errors[0].message, "error");
         });
     } else {
       setSubject("");
-      setBodyRawContent("");
+      setBodyHtmlContent("");
     }
   }, [open]);
 
   const onSaveHandler = async () => {
-    const stringifiedRawContent = JSON.stringify(
-      templateEditorRef.current.getRawContent()
-    );
+    const currentHtmlContent = templateEditorRef.current.getHtmlContent();
 
     try {
       if (type === "update") {
         const response = await axios.put(`/api/step/${id}`, {
           subject: subject,
-          body: stringifiedRawContent,
+          body: currentHtmlContent,
         });
       } else {
         const response = await axios.post(`/api/campaign/${campaignId}/step`, {
           subject: subject,
-          body: stringifiedRawContent,
+          body: currentHtmlContent,
         });
       }
       showSnackbar("Campaign step saved", "success");
@@ -152,7 +149,7 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
       </Grid>
 
       <Grid className={editorContainer}>
-        <TemplateEditor ref={templateEditorRef} rawContent={bodyRawContent} />
+        <TemplateEditor ref={templateEditorRef} htmlContent={bodyHtmlContent} />
 
         <Grid container className={buttonContainer}>
           <Grid item xs={true}>
