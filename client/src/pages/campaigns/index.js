@@ -25,6 +25,7 @@ const Campaigns = () => {
     const newFilteredData = campaignsData.filter((data) =>
       data.name.includes(searchCampaignName)
     );
+    setFilteredData(newFilteredData);
   }, [searchCampaignName]);
 
   const getCampaigns = () => {
