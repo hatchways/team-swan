@@ -224,26 +224,6 @@ const TemplateEditor = ({ htmlContent }, ref) => {
         />
       </div>
 
-      <button
-        onClick={() => {
-          const html = convertToHtml(editorState.getCurrentContent());
-          setHtml(html);
-        }}
-      >
-        Get Html
-      </button>
-
-      <button
-        onClick={() => {
-          let contentState = convertFromHtml(html);
-          updateEditor(
-            EditorState.push(editorState, contentState, "insert-characters")
-          );
-        }}
-      >
-        Import Html
-      </button>
-
       <EditorToolbar
         toggleFontStyle={toggleFontStyle}
         toggleFontFamily={toggleFontFamily}
