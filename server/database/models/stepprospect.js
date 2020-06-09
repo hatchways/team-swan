@@ -21,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
         key: "id",
       },
     },
+    threadId: {
+      type: DataTypes.STRING,
+    },
     contacted: {
       allowNull: false,
       type: DataTypes.BOOLEAN,
