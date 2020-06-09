@@ -51,11 +51,37 @@ class Gmail {
         });
       }
 
+      let oAuthClient = this.get_oAuthClient();
+      oAuthClient.setCredentials(token);
+
+      const gmail = google.gmail({
+        version: "v1",
+        auth: oAuthClient,
+      });
+
+      // To get the email address
+      const gmailProfileResponse = await gmail.users.getProfile({
+        userId: "me",
+      });
+
+      // To recieve gmail notifications
+      const gmailWatchResponse = await gmail.users.watch({
+        userId: "me",
+        requestBody: {
+          labelIds: ["UNREAD"],
+          labelFilterAction: "include",
+          topicName: "projects/exercisereactredux/topics/gmailResponse",
+        },
+      });
+
       await db.Token.create({
         ...token,
         userId: req.currentUser.id,
+        googleEmailAddress: gmailProfileResponse.data.emailAddress,
+        gmailStartHistoryId: gmailWatchResponse.data.historyId,
       });
 
+      console.log(gmailWatchResponse.data);
       res.send({ message: "User authenticated" });
     });
   };
@@ -77,7 +103,71 @@ class Gmail {
   };
 
   static emailResponse = async (req, res) => {
-    res.send("This is usng ngrok");
+    let buffer = new Buffer(req.body.message.data, "base64");
+    let messageData = JSON.parse(buffer.toString("utf8"));
+
+    const token = await db.Token.findOne({
+      where: {
+        googleEmailAddress: messageData.emailAddress,
+      },
+    });
+
+    let oAuthClient = this.get_oAuthClient();
+    oAuthClient.setCredentials({
+      access_token: token.access_token,
+      refresh_token: token.refresh_token,
+      scope: token.scope,
+      token_type: token.token_type,
+      expiry_date: token.expiry_date,
+    });
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oAuthClient,
+    });
+
+    const gmailHistoryResponse = await gmail.users.history.list({
+      userId: "me",
+      startHistoryId: token.gmailStartHistoryId,
+    });
+
+    const latestHistory =
+      gmailHistoryResponse.data.history[
+        gmailHistoryResponse.data.history.length - 1
+      ];
+
+    console.dir(latestHistory, { depth: null, colors: true });
+
+    res.status(200).send();
+  };
+
+  // DELETE LATER
+  static stop = async (req, res) => {
+    const token = await db.Token.findOne({
+      where: {
+        googleEmailAddress: "johnsample000395777@gmail.com",
+      },
+    });
+
+    let oAuthClient = this.get_oAuthClient();
+    oAuthClient.setCredentials({
+      access_token: token.access_token,
+      refresh_token: token.refresh_token,
+      scope: token.scope,
+      token_type: token.token_type,
+      expiry_date: token.expiry_date,
+    });
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oAuthClient,
+    });
+
+    const gmailStopResponse = await gmail.users.stop({
+      userId: "johnsample000395777@gmail.com",
+    });
+
+    res.status(200).send();
   };
 }
 

@@ -4,6 +4,9 @@ const { body } = require("express-validator");
 const validateRequest = require("../middleware/validate-request");
 const requireAuth = require("../middleware/require-auth");
 
-router.get("/api/gmail/emailResponse", Gmail.emailResponse);
+router.post("/api/gmail/emailResponse", Gmail.emailResponse);
+
+//DELETE LATER
+router.get("/api/gmail/stop", Gmail.stop);
 
 module.exports = router;

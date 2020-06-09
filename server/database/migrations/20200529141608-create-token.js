@@ -2,6 +2,9 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable("Tokens", {
+      googleEmailAddress: {
+        type: Sequelize.STRING,
+      },
       access_token: {
         type: Sequelize.STRING,
       },
@@ -16,6 +19,9 @@ module.exports = {
       },
       expiry_date: {
         type: Sequelize.BIGINT,
+      },
+      gmailStartHistoryId: {
+        type: Sequelize.INTEGER,
       },
       userId: {
         primaryKey: true,
