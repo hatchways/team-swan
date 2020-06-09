@@ -148,7 +148,7 @@ class CampaignController {
     const step = await db.Step.findOne({
       where: {
         order: req.params.order,
-        campaignId: req.currentUser.id,
+        campaignId: req.params.id,
       },
     });
 

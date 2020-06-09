@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "bull": "^3.14.0",
     "cookie-parser": "~1.4.4",
     "cookie-session": "^1.4.0",
     "csv-parser": "^2.3.2",

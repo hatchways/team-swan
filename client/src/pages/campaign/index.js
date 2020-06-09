@@ -17,7 +17,6 @@ import withAuth from "common/withAuth";
 import DataSummary from "./DataSummary";
 import Step from "./Step";
 import StepEditorDialog from "./StepEditorDialog";
-import { campaign } from "constants/routes";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -43,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Campaign = ({ user }) => {
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [campaignInfo, setCampaignInfo] = useState({
     id: null,
     name: "",
@@ -78,7 +76,7 @@ const Campaign = ({ user }) => {
     axios.get(`/api/campaign/${params.id}`).then((response) => {
       setCampaignInfo(response.data);
     });
-  }, [stepEditorValues.open]);
+  }, [params.id, stepEditorValues.open]);
 
   return (
     <Grid container className={container}>
