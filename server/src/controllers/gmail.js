@@ -70,9 +70,19 @@ class Gmail {
       const gmailWatchResponse = await gmail.users.watch({
         userId: "me",
         requestBody: {
-          labelIds: ["UNREAD"],
-          labelFilterAction: "include",
-          topicName: "projects/exercisereactredux/topics/gmailResponse",
+          labelIds: [
+            "SPAM",
+            "TRASH",
+            "STARRED",
+            "SENT",
+            "DRAFT",
+            "CATEGORY_SOCIAL",
+            "CATEGORY_PROMOTIONS",
+            "CATEGORY_UPDATES",
+            "CATEGORY_FORUMS",
+          ],
+          labelFilterAction: "exclude",
+          topicName: "projects/quickstart-1591716148538/topics/emailResponse",
         },
       });
 
@@ -83,7 +93,6 @@ class Gmail {
         gmailStartHistoryId: gmailWatchResponse.data.historyId,
       });
 
-      console.log(gmailWatchResponse.data);
       res.send({ message: "User authenticated" });
     });
   };
@@ -148,31 +157,44 @@ class Gmail {
       },
     });
 
-    let oAuthClient = this.get_oAuthClient();
-    oAuthClient.setCredentials({
-      access_token: token.access_token,
-      refresh_token: token.refresh_token,
-      scope: token.scope,
-      token_type: token.token_type,
-      expiry_date: token.expiry_date,
-    });
-
-    const gmail = google.gmail({
-      version: "v1",
-      auth: oAuthClient,
-    });
+    let gmail = await this.getAuthorizedClient(token.userId);
 
     const gmailHistoryResponse = await gmail.users.history.list({
       userId: "me",
       startHistoryId: token.gmailStartHistoryId,
     });
 
-    const latestHistory =
-      gmailHistoryResponse.data.history[
-        gmailHistoryResponse.data.history.length - 1
-      ];
+    let historyData = gmailHistoryResponse.data.history;
 
-    console.dir(latestHistory, { depth: null, colors: true });
+    if (Array.isArray(historyData)) {
+      const latestHistory = historyData[historyData.length - 1];
+
+      console.dir(latestHistory, { depth: null, colors: true });
+
+      if (Array.isArray(latestHistory.messagesAdded)) {
+        const threadId = latestHistory.messages[0].threadId;
+        console.log(threadId);
+
+        // Update step prospect replied to true associated to that threadId
+        await db.sequelize.query(
+          `UPDATE "StepProspects" AS sp SET "replied" = :replied
+           FROM "Steps" AS s 
+           JOIN "Campaigns" as c
+           ON s."campaignId" = c.id
+           WHERE sp."stepId" = s."id"
+           AND "threadId" = :threadId
+           AND c."userId" = :userId `,
+          {
+            replacements: {
+              replied: true,
+              threadId: threadId,
+              userId: token.userId,
+            },
+            type: db.Sequelize.QueryTypes.UPDATE,
+          }
+        );
+      }
+    }
 
     res.status(200).send();
   };
