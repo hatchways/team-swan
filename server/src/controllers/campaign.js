@@ -41,14 +41,34 @@ class CampaignController {
           [
             db.Sequelize.literal(`(
               SELECT COUNT(*) FROM "CampaignProspects" 
-              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" AND  "CampaignProspects"."state" = 'pending' )`),
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" 
+              AND  "CampaignProspects"."state" = 'pending' )`),
             "pendingCount",
           ],
           [
             db.Sequelize.literal(`(
               SELECT COUNT(*) FROM "CampaignProspects" 
-              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" AND  "CampaignProspects"."state" = 'active' )`),
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" 
+              AND  "CampaignProspects"."state" = 'active' )`),
             "activeCount",
+          ],
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "StepProspects"
+              JOIN "CampaignProspects"
+              ON "CampaignProspects"."id" = "StepProspects"."campaignProspectId"
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id"
+              AND  "StepProspects"."replied" = true )`),
+            "repliedCount",
+          ],
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "StepProspects"
+              JOIN "CampaignProspects"
+              ON "CampaignProspects"."id" = "StepProspects"."campaignProspectId"
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id"
+              AND  "StepProspects"."contacted" = true )`),
+            "contactedCount",
           ],
         ],
       },
@@ -61,8 +81,23 @@ class CampaignController {
               [
                 db.Sequelize.literal(`(
                   SELECT COUNT(*) FROM "StepProspects" 
-                  WHERE "StepProspects"."stepId" = "Steps"."id" AND "StepProspects"."currentStep" = true)`),
+                  WHERE "StepProspects"."stepId" = "Steps"."id" 
+                  AND "StepProspects"."currentStep" = true)`),
                 "prospectCount",
+              ],
+              [
+                db.Sequelize.literal(`(
+                  SELECT COUNT(*) FROM "StepProspects" 
+                  WHERE "StepProspects"."stepId" = "Steps"."id" 
+                  AND "StepProspects"."replied" = true)`),
+                "repliedCount",
+              ],
+              [
+                db.Sequelize.literal(`(
+                  SELECT COUNT(*) FROM "StepProspects" 
+                  WHERE "StepProspects"."stepId" = "Steps"."id" 
+                  AND "StepProspects"."contacted" = true)`),
+                "contactedCount",
               ],
             ],
           },
