@@ -11,8 +11,8 @@ const userAuthRoute = require("./routes/user-auth");
 const uploadRoute = require("./routes/upload-routes");
 const prospectsRoute = require("./routes/prospect");
 const campaignRoute = require("./routes/campaign");
-const gmailAuthRoute = require("./routes/gmail-auth");
 const gmailWebhookRoute = require("./routes/gmail-webhook");
+const gmailAuthRoute = require("./routes/gmail");
 
 const { json, urlencoded } = express;
 

@@ -1,6 +1,8 @@
 const { google } = require("googleapis");
 const DataBaseConnectionError = require("../errors/database-connection-error");
 const db = require("../../database/models/index");
+const EmailQueue = require("../utils/queue");
+const Mail = require("../utils/mail");
 
 // The controller for Gmail Client
 class Gmail {
@@ -86,19 +88,53 @@ class Gmail {
     });
   };
 
-  // Check if there is a token present in session
-  static isSignedIn = async (req, res) => {
-    const token = await db.Token.findOne({
-      where: {
-        userId: req.currentUser.id,
-      },
-    });
+  static getAuthorizedClient = async (userId) => {
+    try {
+      const auth = this.get_oAuthClient();
+      const token = await db.Token.findOne({
+        where: {
+          userId: userId,
+        },
+      });
+      if (!token) throw new Error("No token found!");
 
-    if (token) {
-      console.log("True");
-      return res.send({ message: true });
-    } else {
-      return res.send({ message: false });
+      auth.setCredentials({
+        access_token: token.access_token,
+        refresh_token: token.refresh_token,
+        scope: token.scope,
+        token_type: token.token_type,
+        expiry_date: token.expiry_date,
+      });
+      const gmail = google.gmail({ version: "v1", auth });
+      return gmail;
+    } catch (error) {
+      console.log("Error authorizing Gmail Client\n", error);
+      Promise.reject(error.message);
+    }
+  };
+
+  static getGmailAddress = async (id) => {
+    const gmail = await this.getAuthorizedClient(id);
+    const gmailUserClient = gmail.users;
+    const { emailAddress } = (
+      await gmailUserClient.getProfile({
+        userId: "me",
+      })
+    ).data;
+
+    return emailAddress;
+  };
+
+  static sendEmail = async (email, userId) => {
+    try {
+      const gmail = await this.getAuthorizedClient(userId);
+      gmail.users.messages.send({
+        userId: "me",
+        requestBody: { raw: email },
+      });
+    } catch (err) {
+      console.log(err);
+      Promise.reject(err.message);
     }
   };
 
@@ -169,6 +205,47 @@ class Gmail {
 
     res.status(200).send();
   };
+
+  static addToQueue = async (encodedEmails, userId) => {
+    let time = 5000;
+    const addTime = 5000;
+    encodedEmails.forEach((endodedEmail) => {
+      const data = { endodedEmail, userId };
+      const options = {
+        delay: time,
+      };
+      time = time + addTime;
+      EmailQueue.add(data, options);
+    });
+  };
+
+  static parseEmails = async (emails, userName, userId, body, subject) => {
+    const gmailAddress = await this.getGmailAddress(userId);
+    const from = `${userName} \u003c${gmailAddress}\u003e`;
+    const encodedEmails = emails.map((email) => {
+      const parsedEmail = Mail.parseMail(body);
+      const encodedEmail = Mail.encodeEmail(email, from, subject, parsedEmail);
+      return encodedEmail;
+    });
+    this.addToQueue(encodedEmails, userId);
+  };
+
+  static tempRouteSendEmail = async (req, res) => {
+    const emails = req.body.emails;
+    const userName = "Donald Trump";
+    const userId = req.currentUser.id;
+    const body = "This is a very important message";
+    const subject = "Hello world";
+    this.parseEmails(emails, userName, userId, body, subject);
+    res.send("ok");
+  };
 }
+
+EmailQueue.process(async (job, done) => {
+  await Gmail.sendEmail(job.data.endodedEmail, job.data.userId);
+  done();
+});
+
+EmailQueue.on("completed", (job, result) => {});
 
 module.exports = Gmail;

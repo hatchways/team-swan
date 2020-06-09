@@ -8,6 +8,7 @@ import {
   IconButton,
   Input,
   Button,
+  CircularProgress,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import TemplateEditor from "common/TemplateEditor";
@@ -51,30 +52,40 @@ const useStyles = makeStyles((theme) => ({
       width: "6rem",
     },
   },
+  loadingContainer: {
+    height: 20 + "vh",
+    width: 20 + "vh",
+  },
 }));
 
 const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
   const [subject, setSubject] = useState("");
   const [bodyHtmlContent, setBodyHtmlContent] = useState("");
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   const templateEditorRef = useRef();
   const showSnackbar = useSnackbar();
 
   useEffect(() => {
+    setIsDataLoading(true);
     if (type === "update") {
       axios
         .get(`/api/step/${id}`)
         .then((response) => {
           setSubject(response.data.subject);
           setBodyHtmlContent(response.data.body);
+          setIsDataLoading(false);
         })
         .catch((error) => {
           showSnackbar(error.response.data.errors[0].message, "error");
+          onClose();
         });
     } else {
       setSubject("");
       setBodyHtmlContent("");
+      setIsDataLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const onSaveHandler = async () => {
@@ -107,6 +118,7 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
     templateTitle,
     subjectInputContainer,
     buttonContainer,
+    loadingContainer,
   } = useStyles();
 
   return (
@@ -116,67 +128,88 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
       PaperProps={{ className: paper }}
       maxWidth="md"
     >
-      <DialogTitle>
-        <Grid container alignItems="center">
+      {isDataLoading ? (
+        <Grid
+          container
+          className={loadingContainer}
+          direction="row"
+          justify="center"
+          alignItems="center"
+        >
           <Grid item>
-            <Typography className={templateTitle} variant="h5">
-              {`Step ${order}`}
-            </Typography>
-          </Grid>
-          <Grid item xs={true}>
-            <Typography className={dialogTitleName}>Edit template</Typography>
-          </Grid>
-          <Grid item>
-            <IconButton onClick={onClose}>
-              <Close />
-            </IconButton>
-          </Grid>
+            <CircularProgress />
+          </Grid>{" "}
         </Grid>
-      </DialogTitle>
+      ) : (
+        <>
+          <DialogTitle>
+            <Grid container alignItems="center">
+              <Grid item>
+                <Typography className={templateTitle} variant="h5">
+                  {`Step ${order}`}
+                </Typography>
+              </Grid>
+              <Grid item xs={true}>
+                <Typography className={dialogTitleName}>
+                  Edit template
+                </Typography>
+              </Grid>
+              <Grid item>
+                <IconButton onClick={onClose}>
+                  <Close />
+                </IconButton>
+              </Grid>
+            </Grid>
+          </DialogTitle>
 
-      <Grid className={subjectInputContainer} container alignItems="center">
-        <Grid item>
-          <Typography className={dialogTitleName}>Subject</Typography>
-        </Grid>
-        <Grid item xs={true}>
-          <Input
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            fullWidth
-            disableUnderline
-          />
-        </Grid>
-      </Grid>
-
-      <Grid className={editorContainer}>
-        <TemplateEditor ref={templateEditorRef} htmlContent={bodyHtmlContent} />
-
-        <Grid container className={buttonContainer}>
-          <Grid item xs={true}>
-            <Button variant="outlined" color="secondary" size="large">
-              Variables
-            </Button>
+          <Grid className={subjectInputContainer} container alignItems="center">
+            <Grid item>
+              <Typography className={dialogTitleName}>Subject</Typography>
+            </Grid>
+            <Grid item xs={true}>
+              <Input
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                fullWidth
+                disableUnderline
+              />
+            </Grid>
           </Grid>
-          <Grid item>
-            <Button
-              variant="text"
-              color="secondary"
-              size="large"
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              size="large"
-              onClick={onSaveHandler}
-            >
-              Save
-            </Button>
+
+          <Grid className={editorContainer}>
+            <TemplateEditor
+              ref={templateEditorRef}
+              htmlContent={bodyHtmlContent}
+            />
+
+            <Grid container className={buttonContainer}>
+              <Grid item xs={true}>
+                <Button variant="outlined" color="secondary" size="large">
+                  Variables
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="text"
+                  color="secondary"
+                  size="large"
+                  onClick={onClose}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="large"
+                  onClick={onSaveHandler}
+                >
+                  Save
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
-        </Grid>
-      </Grid>
+        </>
+      )}
     </Dialog>
   );
 };
