@@ -1,57 +1,84 @@
-import React, { useEffect } from 'react';
-import { makeStyles, Grid, Typography, Paper } from '@material-ui/core';
-import { Mail as MailIcon } from '@material-ui/icons';
-import { toSentenceCase } from 'js-convert-case';
+import React, { useState } from "react";
+import {
+  makeStyles,
+  Grid,
+  Typography,
+  Paper,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@material-ui/core";
+import { Mail as MailIcon, MoreVert as MoreVertIcon } from "@material-ui/icons";
+import { toSentenceCase } from "js-convert-case";
+import { campaign } from "constants/routes";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    width: '100%',
-    margin: '2.5rem 0 2.5rem 0',
-    padding: '2.5rem 0 2.5rem 0',
-    cursor: 'pointer'
+    width: "100%",
+    margin: "1rem 0 1rem 0",
+    padding: "2.5rem 0 2.5rem 0",
   },
   stepInfoContainer: {
-    paddingLeft: '3rem'
+    paddingLeft: "3rem",
   },
   owner: {
-    color: theme.palette.grey[400]
+    color: theme.palette.grey[400],
   },
   dataSummaryContainer: {
-    width: '10rem'
+    width: "10rem",
   },
   dataLabel: {
-    fontSize: '13px'
+    fontSize: "13px",
   },
   dataNumber: {
     fontWeight: theme.typography.fontWeightLight,
-    marginTop: '7px'
-  }
+    marginTop: "7px",
+  },
+  optionsButton: {
+    width: "5rem",
+  },
 }));
 
-const DataSummary = ({
+const Step = ({
   subject,
   userName,
   order,
   data,
-  openUpdateStepEditor
+  openUpdateStepEditor,
+  stepId,
+  campaignId,
+  moveProspectsToStep,
 }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+
   const {
     container,
     stepInfoContainer,
     owner,
     dataSummaryContainer,
     dataLabel,
-    dataNumber
+    dataNumber,
+    optionsButton,
   } = useStyles();
 
+  const clickEditMenuHandler = () => {
+    openUpdateStepEditor(order, stepId);
+    setIsMenuOpen(false);
+  };
+
+  const clickMoveProspectMenuHandler = () => {
+    moveProspectsToStep(stepId, campaignId);
+    setIsMenuOpen(false);
+  };
+
+  const clickOptionsMenuHandler = (e) => {
+    setIsMenuOpen(true);
+    setMenuAnchor(e.currentTarget);
+  };
+
   return (
-    <Grid
-      className={container}
-      item
-      container
-      component={Paper}
-      onClick={() => openUpdateStepEditor(order)}
-    >
+    <Grid className={container} item container component={Paper}>
       <Grid
         item
         container
@@ -95,8 +122,31 @@ const DataSummary = ({
           </Typography>
         </Grid>
       ))}
+      <Grid
+        className={optionsButton}
+        item
+        container
+        justify="center"
+        alignItems="center"
+      >
+        <IconButton onClick={clickOptionsMenuHandler}>
+          <MoreVertIcon />
+        </IconButton>
+
+        <Menu
+          elevation={3}
+          anchorEl={menuAnchor}
+          open={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+        >
+          <MenuItem onClick={clickMoveProspectMenuHandler}>
+            Move Prospects
+          </MenuItem>
+          <MenuItem onClick={clickEditMenuHandler}>Edit</MenuItem>
+        </Menu>
+      </Grid>
     </Grid>
   );
 };
 
-export default DataSummary;
+export default Step;

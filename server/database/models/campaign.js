@@ -6,35 +6,35 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       validate: {
         notEmpty: {
-          msg: '"Name" is required'
-        }
-      }
+          msg: '"Name" is required',
+        },
+      },
     },
     userId: {
       allowNull: false,
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
-        key: "id"
-      }
+        key: "id",
+      },
     },
     createdAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
     updatedAt: {
       allowNull: false,
-      type: DataTypes.DATE
-    }
+      type: DataTypes.DATE,
+    },
   });
 
   Campaign.associate = function (models) {
     Campaign.belongsTo(models.User, { foreignKey: "userId" });
     Campaign.hasMany(models.Step, { foreignKey: "campaignId" });
     Campaign.belongsToMany(models.Prospect, {
-      through: "CampaignProspect",
+      through: "CampaignProspects",
       foreignKey: "campaignId",
-      onDelete: "CASCADE"
+      onDelete: "CASCADE",
     });
   };
 

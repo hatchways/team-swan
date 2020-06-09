@@ -1,42 +1,45 @@
 "use strict";
 module.exports = {
-  up: (queryInterface, Sequelize) =>
-    queryInterface.createTable("Steps", {
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.createTable("CampaignProspects", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      order: {
+      prospectId: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        onDelete: "CASCADE",
+        references: {
+          model: "Prospects",
+          key: "id",
+        },
       },
       campaignId: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        onDelete: "CASCADE",
         references: {
           model: "Campaigns",
           key: "id",
         },
       },
-      subject: {
+      state: {
         allowNull: false,
         type: Sequelize.STRING,
+        defaultValue: "pending",
         validate: {
-          notEmpty: {
-            msg: '"Subject" is required',
+          isIn: {
+            args: [["pending", "active"]],
+            msg: "Invalid status type",
           },
         },
       },
-      body: {
-        allowNull: false,
-        type: Sequelize.TEXT,
-        validate: {
-          notEmpty: {
-            msg: '"Body" is required',
-          },
-        },
+      threadId: {
+        allowNull: true,
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -46,9 +49,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-    }),
-
+    });
+  },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("Steps");
+    return queryInterface.dropTable("CampaignProspects");
   },
 };
