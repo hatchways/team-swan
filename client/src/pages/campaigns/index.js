@@ -23,10 +23,10 @@ const Campaigns = () => {
 
   useEffect(() => {
     const newFilteredData = campaignsData.filter((data) =>
-      data.name.includes(searchCampaignName)
+      data.name.toLowerCase().includes(searchCampaignName.toLowerCase())
     );
     setFilteredData(newFilteredData);
-  }, [searchCampaignName]);
+  }, [campaignsData, searchCampaignName]);
 
   const getCampaigns = () => {
     setIsDataLoading(true);
