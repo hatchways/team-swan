@@ -231,31 +231,47 @@ class CampaignController {
 
     if (!step) throw new BadRequestError("Step does not exist");
 
-    // Get the campaign prospects that are in pending or in the previous steps
-    const campaignProspects = await db.CampaignProspect.findAll({
-      attributes: ["id"],
-      where: {
-        campaignId: req.params.campaignId,
-        [Op.or]: [
+    let campaignProspects = [];
+
+    if (step.order === 1) {
+      // Get the campaign prospects that are in pending
+      campaignProspects = await db.CampaignProspect.findAll({
+        attributes: ["id"],
+        where: {
+          campaignId: req.params.campaignId,
+          state: "pending",
+        },
+        include: [
           {
-            [Op.and]: [
-              { "$StepProspects.currentStep$": true },
-              { "$StepProspects.Step.order$": { [Op.lt]: step.order } },
-            ],
-          },
-          {
-            state: "pending",
+            model: db.StepProspect,
+            attributes: [],
+            include: [{ model: db.Step, attributes: [] }],
           },
         ],
-      },
-      include: [
-        {
-          model: db.StepProspect,
-          attributes: [],
-          include: [{ model: db.Step, attributes: [] }],
+      });
+    } else {
+      const previousStep = step.order - 1;
+
+      // Get the campaign prospects that are in the previous steps
+      campaignProspects = await db.CampaignProspect.findAll({
+        attributes: ["id"],
+        where: {
+          campaignId: req.params.campaignId,
+          [Op.and]: [
+            { "$StepProspects.currentStep$": true },
+            { "$StepProspects.replied$": true },
+            { "$StepProspects.Step.order$": previousStep },
+          ],
         },
-      ],
-    });
+        include: [
+          {
+            model: db.StepProspect,
+            attributes: [],
+            include: [{ model: db.Step, attributes: [] }],
+          },
+        ],
+      });
+    }
 
     if (campaignProspects.length === 0)
       throw new BadRequestError("No prospects on previous steps to move");
