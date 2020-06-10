@@ -11,7 +11,8 @@ router.post("/gmail/token", requireAuth, Gmail.generateToken);
 router.post("/gmail/sendEmails", requireAuth, Gmail.tempRouteSendEmail);
 
 router.post("/api/gmail/emailResponse", Gmail.emailResponse);
-//DELETE LATER
+
+// DELETE LATER - debugging to stop getting notification
 router.get("/api/gmail/stop", Gmail.stop);
 
 module.exports = router;

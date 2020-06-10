@@ -216,7 +216,7 @@ class Gmail {
     res.status(200).send();
   };
 
-  // DELETE LATER
+  // DELETE LATER - debugging to stop getting notification
   static stop = async (req, res) => {
     const token = await db.Token.findOne({
       where: {
