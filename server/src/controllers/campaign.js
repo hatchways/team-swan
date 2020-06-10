@@ -281,7 +281,7 @@ class CampaignController {
     }
 
     if (campaignProspects.length === 0)
-      throw new BadRequestError("No available prospects on previous the step");
+      throw new BadRequestError("No available prospects on the previous step");
 
     // Build Instances of step prospect model
     const stepProspects = campaignProspects.map((campaignProspect) => {
