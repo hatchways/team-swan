@@ -258,14 +258,15 @@ class CampaignController {
     } else {
       const previousStep = step.order - 1;
 
-      // Get the campaign prospects that are in the previous steps
+      // Get the campaign prospects that are in the previous steps that haven't replied
       campaignProspects = await db.CampaignProspect.findAll({
         attributes: ["id"],
         where: {
           campaignId: req.params.campaignId,
           [Op.and]: [
             { "$StepProspects.currentStep$": true },
-            { "$StepProspects.replied$": true },
+            { "$StepProspects.replied$": false },
+            { "$StepProspects.contacted$": true },
             { "$StepProspects.Step.order$": previousStep },
           ],
         },
@@ -280,7 +281,7 @@ class CampaignController {
     }
 
     if (campaignProspects.length === 0)
-      throw new BadRequestError("No prospects on previous steps to move");
+      throw new BadRequestError("No available prospects on previous the step");
 
     // Build Instances of step prospect model
     const stepProspects = campaignProspects.map((campaignProspect) => {
