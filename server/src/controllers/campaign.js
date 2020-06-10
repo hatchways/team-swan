@@ -22,6 +22,20 @@ class CampaignController {
               WHERE "CampaignProspects"."campaignId" = "Campaign"."id")`),
             "prospectCount",
           ],
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "CampaignProspects" 
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" 
+              AND  "CampaignProspects"."state" = 'active' )`),
+            "activeCount",
+          ],
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "CampaignProspects" 
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" 
+              AND  "CampaignProspects"."state" = 'pending' )`),
+            "pendingCount",
+          ],
         ],
       },
       order: [["createdAt", "DESC"]],
