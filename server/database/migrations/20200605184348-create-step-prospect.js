@@ -22,9 +22,6 @@ module.exports = {
           key: "id",
         },
       },
-      threadId: {
-        type: Sequelize.STRING,
-      },
       contacted: {
         allowNull: false,
         type: Sequelize.BOOLEAN,

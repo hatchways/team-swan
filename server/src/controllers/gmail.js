@@ -86,6 +86,8 @@ class Gmail {
         },
       });
 
+      console.log(gmailWatchResponse.data);
+
       await db.Token.create({
         ...token,
         userId: req.currentUser.id,
@@ -147,6 +149,7 @@ class Gmail {
     }
   };
 
+  // Gmail notifications webhook action
   static emailResponse = async (req, res) => {
     let buffer = new Buffer(req.body.message.data, "base64");
     let messageData = JSON.parse(buffer.toString("utf8"));
@@ -157,7 +160,20 @@ class Gmail {
       },
     });
 
-    let gmail = await this.getAuthorizedClient(token.userId);
+    let oAuthClient = this.get_oAuthClient();
+
+    oAuthClient.setCredentials({
+      access_token: token.access_token,
+      refresh_token: token.refresh_token,
+      scope: token.scope,
+      token_type: token.token_type,
+      expiry_date: token.expiry_date,
+    });
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oAuthClient,
+    });
 
     const gmailHistoryResponse = await gmail.users.history.list({
       userId: "me",
@@ -175,15 +191,16 @@ class Gmail {
         const threadId = latestHistory.messages[0].threadId;
         console.log(threadId);
 
-        // Update step prospect replied to true associated to that threadId
+        // Update step prospect replied to true that are associated to that threadId
         await db.sequelize.query(
           `UPDATE "StepProspects" AS sp SET "replied" = :replied
-           FROM "Steps" AS s 
+           FROM "CampaignProspects" AS cp
            JOIN "Campaigns" as c
-           ON s."campaignId" = c.id
-           WHERE sp."stepId" = s."id"
-           AND "threadId" = :threadId
-           AND c."userId" = :userId `,
+           ON cp."campaignId" = c."id"
+           WHERE sp."campaignProspectId" = cp."id"
+           AND cp."threadId" = :threadId
+           AND c."userId" = :userId
+           AND sp."currentStep" = true`,
           {
             replacements: {
               replied: true,
