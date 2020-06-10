@@ -94,7 +94,9 @@ const Step = ({
           <Typography variant="h4">{order}</Typography>
         </Grid>
         <Grid item>
-          <Typography variant="h5">{subject}</Typography>
+          <Typography variant="h5">
+            {order === 1 ? subject : "Follow up"}
+          </Typography>
           <Typography className={owner} variant="subtitle2">
             By {userName}
           </Typography>
