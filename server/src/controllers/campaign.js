@@ -183,6 +183,12 @@ class CampaignController {
       nextOrder = campaign.Steps.length + 1;
     }
 
+    if (nextOrder === 1) {
+      if (!req.body.subject.trim()) {
+        throw new BadRequestError("Subject is required for the first step");
+      }
+    }
+
     const step = await db.Step.create({
       order: nextOrder,
       campaignId: campaign.id,
