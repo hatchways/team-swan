@@ -4,47 +4,46 @@ module.exports = (sequelize, DataTypes) => {
     order: {
       allowNull: false,
       type: DataTypes.INTEGER,
-      primaryKey: true
     },
     campaignId: {
       allowNull: false,
       type: DataTypes.INTEGER,
-      primaryKey: true,
       references: {
         model: "Campaigns",
-        key: "id"
-      }
+        key: "id",
+      },
     },
     subject: {
       allowNull: false,
       type: DataTypes.STRING,
       validate: {
         notEmpty: {
-          msg: '"Subject" is required'
-        }
-      }
+          msg: '"Subject" is required',
+        },
+      },
     },
     body: {
       allowNull: false,
       type: DataTypes.TEXT,
       validate: {
         notEmpty: {
-          msg: '"Body" is required'
-        }
-      }
+          msg: '"Body" is required',
+        },
+      },
     },
     createdAt: {
       allowNull: false,
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     },
     updatedAt: {
       allowNull: false,
-      type: DataTypes.DATE
-    }
+      type: DataTypes.DATE,
+    },
   });
 
   Step.associate = function (models) {
     Step.belongsTo(models.Campaign, { foreignKey: "campaignId" });
+    Step.hasMany(models.StepProspect, { foreignKey: "stepId" });
   };
   return Step;
 };

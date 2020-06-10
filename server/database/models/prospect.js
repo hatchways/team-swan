@@ -8,9 +8,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         validate: {
           notEmpty: {
-            msg: '"Email" is required'
-          }
-        }
+            msg: '"Email" is required',
+          },
+        },
       },
       status: {
         allowNull: false,
@@ -18,36 +18,36 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           isIn: {
             args: [["open", "responded", "unsubscribed"]],
-            msg: "Invalid status type"
-          }
-        }
+            msg: "Invalid status type",
+          },
+        },
       },
       firstName: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
       },
       lastName: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
       },
       userId: {
         allowNull: false,
         type: DataTypes.INTEGER,
         validate: {
           notEmpty: {
-            msg: '"User Id" is required'
-          }
-        }
-      }
+            msg: '"User Id" is required',
+          },
+        },
+      },
     },
     {}
   );
   Prospect.associate = function (models) {
     Prospect.belongsTo(models.User, {
-      foreignKey: "userId"
+      foreignKey: "userId",
     });
     Prospect.belongsToMany(models.Campaign, {
-      through: "CampaignProspect",
+      through: "CampaignProspects",
       foreignKey: "prospectId",
-      onDelete: "CASCADE"
+      onDelete: "CASCADE",
     });
   };
   return Prospect;

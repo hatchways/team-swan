@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StepEditorDialog = ({ open, onClose, type, campaignId, order }) => {
+const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
   const [subject, setSubject] = useState("");
   const [bodyHtmlContent, setBodyHtmlContent] = useState("");
   const [isDataLoading, setIsDataLoading] = useState(true);
@@ -70,7 +70,7 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order }) => {
     setIsDataLoading(true);
     if (type === "update") {
       axios
-        .get(`/api/campaign/${campaignId}/step/${order}`)
+        .get(`/api/step/${id}`)
         .then((response) => {
           setSubject(response.data.subject);
           setBodyHtmlContent(response.data.body);
@@ -84,6 +84,7 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order }) => {
       setIsDataLoading(false);
       setSubject("");
       setBodyHtmlContent("");
+      setIsDataLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -93,13 +94,10 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order }) => {
 
     try {
       if (type === "update") {
-        const response = await axios.put(
-          `/api/campaign/${campaignId}/step/${order}`,
-          {
-            subject: subject,
-            body: currentHtmlContent,
-          }
-        );
+        const response = await axios.put(`/api/step/${id}`, {
+          subject: subject,
+          body: currentHtmlContent,
+        });
       } else {
         const response = await axios.post(`/api/campaign/${campaignId}/step`, {
           subject: subject,
