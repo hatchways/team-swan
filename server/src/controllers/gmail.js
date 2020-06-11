@@ -245,10 +245,12 @@ EmailQueue.on("error", (job, result) => {
 });
 
 EmailQueue.on("failed", (job, result) => {
+  Cache.deleteSocketObj(job.data.userId);
   job.remove();
 });
 
 EmailQueue.on("completed", (job, result) => {
+  Cache.clearObj();
   job.remove();
 });
 
