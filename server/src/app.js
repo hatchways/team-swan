@@ -6,6 +6,8 @@ const logger = require("morgan");
 require("express-async-errors");
 const errorHandler = require("./middleware/error-handler");
 const cookieSession = require("cookie-session");
+const http = require("http");
+const Cache = require("./utils/cache");
 
 const userAuthRoute = require("./routes/user-auth");
 const uploadRoute = require("./routes/upload-routes");
@@ -16,7 +18,22 @@ const gmailAuthRoute = require("./routes/gmail");
 const { json, urlencoded } = express;
 
 var app = express();
+const io = require("./utils/socketmanager");
+app.io = io.Initialize();
 
+app.io.on("connect", (socket) => {
+  console.log("user connected!");
+  socket.emit("welcome", { message: "Hello world this is the server" });
+  app.set("socket", socket);
+});
+
+app.io.on("disableSnackBar", (message) => {
+  const obj = Cache.getSocketObj(message.id);
+  obj.open = false;
+  Cache.setSocketObj(message.id, obj);
+});
+
+app.set("io", app.io);
 app.use(logger("dev"));
 app.use(json());
 app.use(urlencoded({ extended: false }));
