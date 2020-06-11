@@ -21,13 +21,7 @@ module.exports = {
         },
       },
       subject: {
-        allowNull: false,
         type: Sequelize.STRING,
-        validate: {
-          notEmpty: {
-            msg: '"Subject" is required',
-          },
-        },
       },
       body: {
         allowNull: false,

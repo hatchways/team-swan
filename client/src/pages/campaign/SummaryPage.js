@@ -130,11 +130,11 @@ const SummaryPage = ({ user }) => {
         data={[
           {
             label: "Contacted",
-            value: campaignInfo.contacted || 0,
+            value: campaignInfo.contactedCount || 0,
           },
           {
             label: "Relpied",
-            value: campaignInfo.replied || 0,
+            value: campaignInfo.repliedCount || 0,
           },
           {
             label: "Pending",
@@ -147,7 +147,14 @@ const SummaryPage = ({ user }) => {
         ]}
       />
       {campaignInfo.Steps.map(
-        ({ id, subject, order, contacted, replied, prospectCount }) => (
+        ({
+          id,
+          subject,
+          order,
+          contactedCount,
+          repliedCount,
+          prospectCount,
+        }) => (
           <Step
             key={id}
             stepId={id}
@@ -160,11 +167,11 @@ const SummaryPage = ({ user }) => {
             data={[
               {
                 label: "Contacted",
-                value: contacted,
+                value: contactedCount,
               },
               {
                 label: "Replied",
-                value: replied,
+                value: repliedCount,
               },
               {
                 label: "Prospect",

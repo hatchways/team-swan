@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
   },
+  dialogTitleContainer: {
+    borderBottom: `1px ${theme.palette.grey[300]} solid`,
+  },
   dialogTitleName: {
     color: theme.palette.grey[400],
     paddingLeft: "1.5rem",
@@ -32,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
     borderRight: `1px ${theme.palette.grey[300]} solid`,
   },
   subjectInputContainer: {
-    borderTop: `1px ${theme.palette.grey[300]} solid`,
     borderBottom: `1px ${theme.palette.grey[300]} solid`,
     padding: "2px 0 2pxrem 0",
     "& input": {
@@ -115,6 +117,7 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
     editorContainer,
     paper,
     dialogTitleName,
+    dialogTitleContainer,
     templateTitle,
     subjectInputContainer,
     buttonContainer,
@@ -142,7 +145,7 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
         </Grid>
       ) : (
         <>
-          <DialogTitle>
+          <DialogTitle className={dialogTitleContainer}>
             <Grid container alignItems="center">
               <Grid item>
                 <Typography className={templateTitle} variant="h5">
@@ -151,7 +154,7 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
               </Grid>
               <Grid item xs={true}>
                 <Typography className={dialogTitleName}>
-                  Edit template
+                  {order === 1 ? "New thread template" : "Follow up template"}
                 </Typography>
               </Grid>
               <Grid item>
@@ -162,19 +165,25 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
             </Grid>
           </DialogTitle>
 
-          <Grid className={subjectInputContainer} container alignItems="center">
-            <Grid item>
-              <Typography className={dialogTitleName}>Subject</Typography>
+          {order === 1 ? (
+            <Grid
+              className={subjectInputContainer}
+              container
+              alignItems="center"
+            >
+              <Grid item>
+                <Typography className={dialogTitleName}>Subject</Typography>
+              </Grid>
+              <Grid item xs={true}>
+                <Input
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  fullWidth
+                  disableUnderline
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={true}>
-              <Input
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                fullWidth
-                disableUnderline
-              />
-            </Grid>
-          </Grid>
+          ) : null}
 
           <Grid className={editorContainer}>
             <TemplateEditor

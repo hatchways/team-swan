@@ -40,10 +40,7 @@ router.post(
 router.post(
   "/api/campaign/:id/step",
   requireAuth,
-  [
-    body("subject").notEmpty().withMessage("Subject is required"),
-    body("body").notEmpty().withMessage("Body is required"),
-  ],
+  [body("body").notEmpty().withMessage("Body is required")],
   validateRequest,
   CampaignController.addStep
 );
