@@ -14,6 +14,7 @@ const Campaigns = () => {
   const [campaignNameTextField, setCampaignNameTextField] = useState("");
   const [searchCampaignName, setSearchCampaignName] = useState("");
   const [isDataLoading, setIsDataLoading] = useState(true);
+  const [filterTabValue, setFilterTabValue] = useState("allCampaigns");
 
   const showSnackbar = useSnackbar();
 
@@ -22,11 +23,22 @@ const Campaigns = () => {
   }, []);
 
   useEffect(() => {
-    const newFilteredData = campaignsData.filter((data) =>
-      data.name.toLowerCase().includes(searchCampaignName.toLowerCase())
-    );
+    const newFilteredData = campaignsData.filter((data) => {
+      let included = data.name
+        .toLowerCase()
+        .includes(searchCampaignName.toLowerCase());
+
+      if (filterTabValue === "activeProspects" && included) {
+        included = data.activeCount > 0;
+      } else if (filterTabValue === "pendingProspects" && included) {
+        included = data.pendingCount > 0;
+      }
+
+      return included;
+    });
+
     setFilteredData(newFilteredData);
-  }, [campaignsData, searchCampaignName]);
+  }, [campaignsData, searchCampaignName, filterTabValue]);
 
   const getCampaigns = () => {
     setIsDataLoading(true);
@@ -55,6 +67,8 @@ const Campaigns = () => {
             key="sidebar"
             searchCampaignName={searchCampaignName}
             setSearchCampaignName={setSearchCampaignName}
+            filterTabValue={filterTabValue}
+            setFilterTabValue={setFilterTabValue}
           />
         }
         RightDrawerComponent={
