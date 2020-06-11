@@ -18,6 +18,7 @@ import { useParams } from "react-router-dom";
 import useSnackBar from "common/useSnackbar";
 import axios from "axios";
 import StepEditorDialog from "./StepEditorDialog";
+import Gmail from "pages/gmailAuth/Gmail";
 
 const useStyles = makeStyles((theme) => ({
   campaignTitleContainer: {
@@ -39,13 +40,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SummaryPage = ({ user }) => {
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
+const SummaryPage = ({ user, socket }) => {
   const [campaignInfo, setCampaignInfo] = useState({
     id: null,
     name: "",
     Steps: [],
   });
+  const [shouldPageUpdate, setShouldPageUpdate] = useState(false);
+  useEffect(() => {
+    if (socket) {
+      socket.on("update", () => {
+        console.log("page should update!");
+        setShouldPageUpdate(true);
+      });
+    }
+  }, [socket]);
+
+  const [isGmailModalOpen, setIsGmailModalOpen] = useState(false);
   const [stepEditorValues, setStepEditorValues] = useState({
     order: 1,
     campaignId: campaignInfo.id,
@@ -86,118 +97,154 @@ const SummaryPage = ({ user }) => {
 
   const getCampaignInfo = () => {
     axios.get(`/api/campaign/${params.id}`).then((response) => {
-      console.log(response.data);
-      setCampaignInfo(response.data);
+      const newData = response.data;
+      newData.contacted = parseInt(0);
+      newData.replied = parseInt(0);
+      newData.Steps.forEach((step) => {
+        newData.contacted += parseInt(step.contactedProspects);
+        newData.replied += parseInt(step.repliedProspects);
+      });
+      setCampaignInfo(newData);
     });
   };
 
   useEffect(() => {
     getCampaignInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepEditorValues.open]);
 
   const { campaignTitleContainer, iconButton, button } = useStyles();
 
   return (
-    <Grid container>
-      <Grid item container>
-        <Grid className={campaignTitleContainer}>
-          <Typography variant="h4">{campaignInfo.name}</Typography>
-          <Typography variant="subtitle1">
-            By {`${user.firstName} ${user.lastName}`}
-          </Typography>
+    <>
+      <Grid container>
+        <Grid item container>
+          <Grid className={campaignTitleContainer}>
+            <Typography variant="h4">{campaignInfo.name}</Typography>
+            <Typography variant="subtitle1">
+              By {`${user.firstName} ${user.lastName}`}
+            </Typography>
+          </Grid>
+          <Grid>
+            <IconButton className={iconButton}>
+              <FlashIcon />
+            </IconButton>
+            <IconButton className={iconButton}>
+              <MailIcon />
+            </IconButton>
+            <IconButton
+              className={iconButton}
+              disabled={!shouldPageUpdate}
+              onClick={() => {
+                getCampaignInfo();
+                setShouldPageUpdate(false);
+              }}
+            >
+              <CachedIcon color={shouldPageUpdate ? "primary" : "disabled"} />
+            </IconButton>
+            <Button
+              className={button}
+              variant="contained"
+              color="primary"
+              size="large"
+            >
+              Add prospect
+            </Button>
+          </Grid>
         </Grid>
-        <Grid>
-          <IconButton className={iconButton}>
-            <FlashIcon />
-          </IconButton>
-          <IconButton className={iconButton}>
-            <MailIcon />
-          </IconButton>
-          <IconButton className={iconButton}>
-            <CachedIcon />
-          </IconButton>
-          <Button
-            className={button}
-            variant="contained"
-            color="primary"
-            size="large"
-          >
-            Add prospect
-          </Button>
-        </Grid>
+        <DataSummary
+          data={[
+            {
+              label: "Contacted",
+              value: campaignInfo.contacted || 0,
+            },
+            {
+              label: "Relpied",
+              value: campaignInfo.replied || 0,
+            },
+            {
+              label: "Pending",
+              value: campaignInfo.pendingCount || 0,
+            },
+            {
+              label: "Active",
+              value: campaignInfo.activeCount || 0,
+            },
+          ]}
+        />
+        {campaignInfo.Steps.map(
+          ({
+            id,
+            subject,
+            order,
+            contactedProspects,
+            repliedProspects,
+            prospectCount,
+          }) => (
+            <Step
+              key={id}
+              stepId={id}
+              campaignId={campaignInfo.id}
+              subject={subject}
+              userName={`${user.firstName} ${user.lastName}`}
+              openUpdateStepEditor={openUpdateStepEditor}
+              order={order}
+              moveProspectsToStep={moveProspectsToStep}
+              hasGmailAuthorized={user.hasGmailAuthorized}
+              openGmailModal={() => {
+                console.log("User not auth");
+                setIsGmailModalOpen(true);
+              }}
+              data={[
+                {
+                  label: "Contacted",
+                  value: contactedProspects,
+                },
+                {
+                  label: "Replied",
+                  value: repliedProspects,
+                },
+                {
+                  label: "Prospect",
+                  value: prospectCount,
+                },
+              ]}
+            />
+          )
+        )}
+
+        <Button
+          className={button}
+          variant="outlined"
+          color="primary"
+          size="large"
+          onClick={() => {
+            openCreateNewStepEditor();
+          }}
+        >
+          Add step
+        </Button>
+
+        <StepEditorDialog
+          id={stepEditorValues.id}
+          open={stepEditorValues.open}
+          order={stepEditorValues.order}
+          campaignId={campaignInfo.id}
+          type={stepEditorValues.type}
+          onClose={() => {
+            setStepEditorValues({ ...stepEditorValues, open: false });
+          }}
+        />
       </Grid>
-      <DataSummary
-        data={[
-          {
-            label: "Contacted",
-            value: campaignInfo.contacted || 0,
-          },
-          {
-            label: "Relpied",
-            value: campaignInfo.replied || 0,
-          },
-          {
-            label: "Pending",
-            value: campaignInfo.pendingCount || 0,
-          },
-          {
-            label: "Active",
-            value: campaignInfo.activeCount || 0,
-          },
-        ]}
-      />
-      {campaignInfo.Steps.map(
-        ({ id, subject, order, contacted, replied, prospectCount }) => (
-          <Step
-            key={id}
-            stepId={id}
-            campaignId={campaignInfo.id}
-            subject={subject}
-            userName={`${user.firstName} ${user.lastName}`}
-            openUpdateStepEditor={openUpdateStepEditor}
-            order={order}
-            moveProspectsToStep={moveProspectsToStep}
-            data={[
-              {
-                label: "Contacted",
-                value: contacted,
-              },
-              {
-                label: "Replied",
-                value: replied,
-              },
-              {
-                label: "Prospect",
-                value: prospectCount,
-              },
-            ]}
-          />
-        )
+      {isGmailModalOpen && (
+        <Gmail
+          isOpen={isGmailModalOpen}
+          onClose={() => {
+            setIsGmailModalOpen(false);
+          }}
+        ></Gmail>
       )}
-
-      <Button
-        className={button}
-        variant="outlined"
-        color="primary"
-        size="large"
-        onClick={() => {
-          openCreateNewStepEditor();
-        }}
-      >
-        Add step
-      </Button>
-
-      <StepEditorDialog
-        id={stepEditorValues.id}
-        open={stepEditorValues.open}
-        order={stepEditorValues.order}
-        campaignId={campaignInfo.id}
-        type={stepEditorValues.type}
-        onClose={() => {
-          setStepEditorValues({ ...stepEditorValues, open: false });
-        }}
-      />
-    </Grid>
+    </>
   );
 };
 
