@@ -151,8 +151,8 @@ class Gmail {
 
   // Gmail notifications webhook action
   static emailResponse = async (req, res) => {
-    let buffer = new Buffer(req.body.message.data, "base64");
-    let messageData = JSON.parse(buffer.toString("utf8"));
+    const buffer = new Buffer(req.body.message.data, "base64");
+    const messageData = JSON.parse(buffer.toString("utf8"));
 
     const token = await db.Token.findOne({
       where: {
