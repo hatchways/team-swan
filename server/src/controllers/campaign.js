@@ -64,6 +64,18 @@ class CampaignController {
                   WHERE "StepProspects"."stepId" = "Steps"."id" AND "StepProspects"."currentStep" = true)`),
                 "prospectCount",
               ],
+              [
+                db.Sequelize.literal(`(
+                  SELECT COUNT(*) FROM "StepProspects" 
+                  WHERE "StepProspects"."stepId" = "Steps"."id" AND "StepProspects"."contacted" = true)`),
+                "contactedProspects",
+              ],
+              [
+                db.Sequelize.literal(`(
+                  SELECT COUNT(*) FROM "StepProspects" 
+                  WHERE "StepProspects"."stepId" = "Steps"."id" AND "StepProspects"."replied" = true)`),
+                "repliedProspects",
+              ],
             ],
           },
         },
