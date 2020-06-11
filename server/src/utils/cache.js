@@ -4,6 +4,9 @@ class Cache {
     obj[id] = object;
   };
   static getSocketObj = (id) => obj[id];
-  static clearSocketObj = (id) => delete obj[id];
+  static deleteSocketObj = (id) => delete obj[id];
+  static clearObj = () => {
+    obj = {};
+  };
 }
 module.exports = Cache;
