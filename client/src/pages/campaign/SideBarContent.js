@@ -13,7 +13,6 @@ import { Link, useLocation, useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   tabsContainer: {
-    marginTop: "3rem",
     "& .MuiTab-root": {
       textAlign: "left",
       marginTop: "1rem",
@@ -70,11 +69,6 @@ const SideBarContent = () => {
       to: `/campaigns/${params.id}/prospects`,
       value: "prospects",
     },
-    {
-      label: <span>EMAILS</span>,
-      to: `/campaigns/${params.id}/emails`,
-      value: "emails",
-    },
   ];
 
   useEffect(() => {
@@ -89,13 +83,6 @@ const SideBarContent = () => {
 
   return (
     <Container>
-      <FormGroup row>
-        <FormControlLabel
-          control={<Switch color="primary" />}
-          label="Active"
-          labelPlacement="start"
-        />
-      </FormGroup>
       <Tabs
         className={tabsContainer}
         orientation="vertical"

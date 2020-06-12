@@ -156,11 +156,11 @@ const SummaryPage = ({ user, socket }) => {
           data={[
             {
               label: "Contacted",
-              value: campaignInfo.contacted || 0,
+              value: campaignInfo.contactedCount || 0,
             },
             {
               label: "Replied",
-              value: campaignInfo.replied || 0,
+              value: campaignInfo.repliedCount || 0,
             },
             {
               label: "Pending",
