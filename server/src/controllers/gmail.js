@@ -198,7 +198,7 @@ class Gmail {
 
     const gmailHistoryResponse = await gmail.users.history.list({
       userId: "me",
-      startHistoryId: 11524,
+      startHistoryId: token.gmailStartHistoryId,
     });
 
     let historyData = gmailHistoryResponse.data.history;
@@ -214,32 +214,36 @@ class Gmail {
         console.log(threadId);
 
         // Update step prospect replied to true that are associated to that threadId
-        // const cp = await db.CampaignProspect.findOne({ where: { threadId } });
-        // if (cp) {
-        //   const sp = await db.StepProspect.findOne({
-        //     where: { campaignProspectId: cp.id },
-        //   });
-        //   sp.replied = true;
-        //   sp.save();
-        // }
-        await db.sequelize.query(
-          `UPDATE "StepProspects" AS sp SET "replied" = :replied
-           FROM "CampaignProspects" AS cp
-           JOIN "Campaigns" as c
-           ON cp."campaignId" = c."id"
-           WHERE sp."campaignProspectId" = cp."id"
-           AND cp."threadId" = :threadId
-           AND c."userId" = :userId
-           AND sp."currentStep" = true`,
-          {
-            replacements: {
-              replied: true,
-              threadId: threadId,
-              userId: token.userId,
+        const cp = await db.CampaignProspect.findOne({
+          where: { threadId },
+        });
+        if (cp) {
+          const sp = await db.StepProspect.findOne({
+            where: {
+              campaignProspectId: cp.id,
             },
-            type: db.Sequelize.QueryTypes.UPDATE,
-          }
-        );
+          });
+          sp.replied = true;
+          sp.save();
+        }
+        // await db.sequelize.query(
+        //   `UPDATE "StepProspects" AS sp SET "replied" = :replied
+        //    FROM "CampaignProspects" AS cp
+        //    JOIN "Campaigns" as c
+        //    ON cp."campaignId" = c."id"
+        //    WHERE sp."campaignProspectId" = cp."id"
+        //    AND cp."threadId" = :threadId
+        //    AND c."userId" = :userId
+        //    AND sp."currentStep" = true`,
+        //   {
+        //     replacements: {
+        //       replied: true,
+        //       threadId: threadId,
+        //       userId: token.userId,
+        //     },
+        //     type: db.Sequelize.QueryTypes.UPDATE,
+        //   }
+        // );
       }
     }
 
