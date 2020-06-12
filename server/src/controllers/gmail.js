@@ -212,6 +212,8 @@ class Gmail {
 
         const threadId = latestHistory.messages[0].threadId;
         console.log(threadId);
+
+        // Update step prospect replied to true that are associated to that threadId
         await db.sequelize.query(
           `UPDATE "StepProspects" AS sp SET "replied" = :replied
            FROM "CampaignProspects" AS cp
