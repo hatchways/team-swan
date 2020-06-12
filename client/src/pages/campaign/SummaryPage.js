@@ -50,9 +50,10 @@ const SummaryPage = ({ user, socket }) => {
   useEffect(() => {
     if (socket) {
       socket.on("update", () => {
-        setShouldPageUpdate(true);
+        getCampaignInfo();
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
   const [isGmailModalOpen, setIsGmailModalOpen] = useState(false);
@@ -158,7 +159,7 @@ const SummaryPage = ({ user, socket }) => {
               value: campaignInfo.contacted || 0,
             },
             {
-              label: "Relpied",
+              label: "Replied",
               value: campaignInfo.replied || 0,
             },
             {
