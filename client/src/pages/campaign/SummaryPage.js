@@ -50,7 +50,6 @@ const SummaryPage = ({ user, socket }) => {
   useEffect(() => {
     if (socket) {
       socket.on("update", () => {
-        console.log("page should update!");
         setShouldPageUpdate(true);
       });
     }
@@ -192,7 +191,6 @@ const SummaryPage = ({ user, socket }) => {
               moveProspectsToStep={moveProspectsToStep}
               hasGmailAuthorized={user.hasGmailAuthorized}
               openGmailModal={() => {
-                console.log("User not auth");
                 setIsGmailModalOpen(true);
               }}
               data={[

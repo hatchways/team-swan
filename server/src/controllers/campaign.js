@@ -22,6 +22,20 @@ class CampaignController {
               WHERE "CampaignProspects"."campaignId" = "Campaign"."id")`),
             "prospectCount",
           ],
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "CampaignProspects" 
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" 
+              AND  "CampaignProspects"."state" = 'active' )`),
+            "activeCount",
+          ],
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "CampaignProspects" 
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" 
+              AND  "CampaignProspects"."state" = 'pending' )`),
+            "pendingCount",
+          ],
         ],
       },
       order: [["createdAt", "DESC"]],
@@ -41,14 +55,34 @@ class CampaignController {
           [
             db.Sequelize.literal(`(
               SELECT COUNT(*) FROM "CampaignProspects" 
-              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" AND  "CampaignProspects"."state" = 'pending' )`),
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" 
+              AND  "CampaignProspects"."state" = 'pending' )`),
             "pendingCount",
           ],
           [
             db.Sequelize.literal(`(
               SELECT COUNT(*) FROM "CampaignProspects" 
-              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" AND  "CampaignProspects"."state" = 'active' )`),
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id" 
+              AND  "CampaignProspects"."state" = 'active' )`),
             "activeCount",
+          ],
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "StepProspects"
+              JOIN "CampaignProspects"
+              ON "CampaignProspects"."id" = "StepProspects"."campaignProspectId"
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id"
+              AND  "StepProspects"."replied" = true )`),
+            "repliedCount",
+          ],
+          [
+            db.Sequelize.literal(`(
+              SELECT COUNT(*) FROM "StepProspects"
+              JOIN "CampaignProspects"
+              ON "CampaignProspects"."id" = "StepProspects"."campaignProspectId"
+              WHERE "CampaignProspects"."campaignId" = "Campaign"."id"
+              AND  "StepProspects"."contacted" = true )`),
+            "contactedCount",
           ],
         ],
       },
@@ -61,20 +95,23 @@ class CampaignController {
               [
                 db.Sequelize.literal(`(
                   SELECT COUNT(*) FROM "StepProspects" 
-                  WHERE "StepProspects"."stepId" = "Steps"."id" AND "StepProspects"."currentStep" = true)`),
+                  WHERE "StepProspects"."stepId" = "Steps"."id" 
+                  AND "StepProspects"."currentStep" = true)`),
                 "prospectCount",
               ],
               [
                 db.Sequelize.literal(`(
                   SELECT COUNT(*) FROM "StepProspects" 
-                  WHERE "StepProspects"."stepId" = "Steps"."id" AND "StepProspects"."contacted" = true)`),
-                "contactedProspects",
+                  WHERE "StepProspects"."stepId" = "Steps"."id" 
+                  AND "StepProspects"."replied" = true)`),
+                "repliedCount",
               ],
               [
                 db.Sequelize.literal(`(
                   SELECT COUNT(*) FROM "StepProspects" 
-                  WHERE "StepProspects"."stepId" = "Steps"."id" AND "StepProspects"."replied" = true)`),
-                "repliedProspects",
+                  WHERE "StepProspects"."stepId" = "Steps"."id" 
+                  AND "StepProspects"."contacted" = true)`),
+                "contactedCount",
               ],
             ],
           },
@@ -160,6 +197,12 @@ class CampaignController {
       nextOrder = campaign.Steps.length + 1;
     }
 
+    if (nextOrder === 1) {
+      if (!req.body.subject.trim()) {
+        throw new BadRequestError("Subject is required for the first step");
+      }
+    }
+
     const step = await db.Step.create({
       order: nextOrder,
       campaignId: campaign.id,
@@ -208,34 +251,51 @@ class CampaignController {
 
     if (!step) throw new BadRequestError("Step does not exist");
 
-    // Get the campaign prospects that are in pending or in the previous steps
-    const campaignProspects = await db.CampaignProspect.findAll({
-      attributes: ["id"],
-      where: {
-        campaignId: req.params.campaignId,
-        [Op.or]: [
+    let campaignProspects = [];
+
+    if (step.order === 1) {
+      // Get the campaign prospects that are in pending
+      campaignProspects = await db.CampaignProspect.findAll({
+        attributes: ["id"],
+        where: {
+          campaignId: req.params.campaignId,
+          state: "pending",
+        },
+        include: [
           {
-            [Op.and]: [
-              { "$StepProspects.currentStep$": true },
-              { "$StepProspects.Step.order$": { [Op.lt]: step.order } },
-            ],
-          },
-          {
-            state: "pending",
+            model: db.StepProspect,
+            attributes: [],
+            include: [{ model: db.Step, attributes: [] }],
           },
         ],
-      },
-      include: [
-        {
-          model: db.StepProspect,
-          attributes: [],
-          include: [{ model: db.Step, attributes: [] }],
+      });
+    } else {
+      const previousStep = step.order - 1;
+
+      // Get the campaign prospects that are in the previous steps that haven't replied
+      campaignProspects = await db.CampaignProspect.findAll({
+        attributes: ["id"],
+        where: {
+          campaignId: req.params.campaignId,
+          [Op.and]: [
+            { "$StepProspects.currentStep$": true },
+            { "$StepProspects.replied$": false },
+            { "$StepProspects.contacted$": true },
+            { "$StepProspects.Step.order$": previousStep },
+          ],
         },
-      ],
-    });
+        include: [
+          {
+            model: db.StepProspect,
+            attributes: [],
+            include: [{ model: db.Step, attributes: [] }],
+          },
+        ],
+      });
+    }
 
     if (campaignProspects.length === 0)
-      throw new BadRequestError("No prospects on previous steps to move");
+      throw new BadRequestError("No available prospects on the previous step");
 
     // Build Instances of step prospect model
     const stepProspects = campaignProspects.map((campaignProspect) => {

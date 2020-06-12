@@ -9,9 +9,6 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import { Mail as MailIcon, MoreVert as MoreVertIcon } from "@material-ui/icons";
-import { toSentenceCase } from "js-convert-case";
-import { campaign } from "constants/routes";
-import Gmail from "pages/gmailAuth/Gmail";
 import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({

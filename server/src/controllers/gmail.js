@@ -55,9 +55,46 @@ class Gmail {
         });
       }
 
+      let oAuthClient = this.get_oAuthClient();
+      oAuthClient.setCredentials(token);
+
+      const gmail = google.gmail({
+        version: "v1",
+        auth: oAuthClient,
+      });
+
+      // To get the email address
+      const gmailProfileResponse = await gmail.users.getProfile({
+        userId: "me",
+      });
+
+      // To recieve gmail notifications
+      const gmailWatchResponse = await gmail.users.watch({
+        userId: "me",
+        requestBody: {
+          labelIds: [
+            "SPAM",
+            "TRASH",
+            "STARRED",
+            "SENT",
+            "DRAFT",
+            "CATEGORY_SOCIAL",
+            "CATEGORY_PROMOTIONS",
+            "CATEGORY_UPDATES",
+            "CATEGORY_FORUMS",
+          ],
+          labelFilterAction: "exclude",
+          topicName: "projects/quickstart-1591716148538/topics/emailResponse",
+        },
+      });
+
+      console.log(gmailWatchResponse.data);
+
       await db.Token.create({
         ...token,
         userId: req.currentUser.id,
+        googleEmailAddress: gmailProfileResponse.data.emailAddress,
+        gmailStartHistoryId: gmailWatchResponse.data.historyId,
       });
 
       res.send({ message: "User authenticated" });
@@ -123,6 +160,101 @@ class Gmail {
       console.log(err);
       Promise.reject(err.message);
     }
+  };
+  // Gmail notifications webhook action
+  static emailResponse = async (req, res) => {
+    const buffer = new Buffer(req.body.message.data, "base64");
+    const messageData = JSON.parse(buffer.toString("utf8"));
+
+    const token = await db.Token.findOne({
+      where: {
+        googleEmailAddress: messageData.emailAddress,
+      },
+    });
+
+    let oAuthClient = this.get_oAuthClient();
+
+    oAuthClient.setCredentials({
+      access_token: token.access_token,
+      refresh_token: token.refresh_token,
+      scope: token.scope,
+      token_type: token.token_type,
+      expiry_date: token.expiry_date,
+    });
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oAuthClient,
+    });
+
+    const gmailHistoryResponse = await gmail.users.history.list({
+      userId: "me",
+      startHistoryId: token.gmailStartHistoryId,
+    });
+
+    let historyData = gmailHistoryResponse.data.history;
+
+    if (Array.isArray(historyData)) {
+      const latestHistory = historyData[historyData.length - 1];
+
+      console.dir(latestHistory, { depth: null, colors: true });
+
+      if (Array.isArray(latestHistory.messagesAdded)) {
+        const threadId = latestHistory.messages[0].threadId;
+        console.log(threadId);
+
+        // Update step prospect replied to true that are associated to that threadId
+        await db.sequelize.query(
+          `UPDATE "StepProspects" AS sp SET "replied" = :replied
+           FROM "CampaignProspects" AS cp
+           JOIN "Campaigns" as c
+           ON cp."campaignId" = c."id"
+           WHERE sp."campaignProspectId" = cp."id"
+           AND cp."threadId" = :threadId
+           AND c."userId" = :userId
+           AND sp."currentStep" = true`,
+          {
+            replacements: {
+              replied: true,
+              threadId: threadId,
+              userId: token.userId,
+            },
+            type: db.Sequelize.QueryTypes.UPDATE,
+          }
+        );
+      }
+    }
+
+    res.status(200).send();
+  };
+
+  // DELETE LATER - debugging to stop getting notification
+  static stop = async (req, res) => {
+    const token = await db.Token.findOne({
+      where: {
+        googleEmailAddress: "johnsample000395777@gmail.com",
+      },
+    });
+
+    let oAuthClient = this.get_oAuthClient();
+    oAuthClient.setCredentials({
+      access_token: token.access_token,
+      refresh_token: token.refresh_token,
+      scope: token.scope,
+      token_type: token.token_type,
+      expiry_date: token.expiry_date,
+    });
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oAuthClient,
+    });
+
+    const gmailStopResponse = await gmail.users.stop({
+      userId: "johnsample000395777@gmail.com",
+    });
+
+    res.status(200).send();
   };
 
   static addToQueue = async (encodedEmails, userId, stepProspectIds) => {

@@ -22,8 +22,7 @@ const requireAuth = (req, res, next) => {
       throw new ForbiddenPathError();
     }
     const payload = jwt.verify(req.session.jwt, process.env.JWT_KEY);
-    const socket = req.app.get("socket");
-    socket.join(payload.id);
+
     req.currentUser = payload;
   } catch (err) {
     // If there is any errors validating the JWT log them to the console
