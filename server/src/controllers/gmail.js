@@ -214,32 +214,32 @@ class Gmail {
         console.log(threadId);
 
         // Update step prospect replied to true that are associated to that threadId
-        const cp = await db.CampaignProspect.findOne({ where: { threadId } });
-        if (cp) {
-          const sp = await db.StepProspect.findOne({
-            where: { campaignProspectId: cp.id },
-          });
-          sp.replied = true;
-          sp.save();
-        }
-        // await db.sequelize.query(
-        //   `UPDATE "StepProspects" AS sp SET "replied" = :replied
-        //    FROM "CampaignProspects" AS cp
-        //    JOIN "Campaigns" as c
-        //    ON cp."campaignId" = c."id"
-        //    WHERE sp."campaignProspectId" = cp."id"
-        //    AND cp."threadId" = :threadId
-        //    AND c."userId" = :userId
-        //    AND sp."currentStep" = true`,
-        //   {
-        //     replacements: {
-        //       replied: true,
-        //       threadId: threadId,
-        //       userId: token.userId,
-        //     },
-        //     type: db.Sequelize.QueryTypes.UPDATE,
-        //   }
-        // );
+        // const cp = await db.CampaignProspect.findOne({ where: { threadId } });
+        // if (cp) {
+        //   const sp = await db.StepProspect.findOne({
+        //     where: { campaignProspectId: cp.id },
+        //   });
+        //   sp.replied = true;
+        //   sp.save();
+        // }
+        await db.sequelize.query(
+          `UPDATE "StepProspects" AS sp SET "replied" = :replied
+           FROM "CampaignProspects" AS cp
+           JOIN "Campaigns" as c
+           ON cp."campaignId" = c."id"
+           WHERE sp."campaignProspectId" = cp."id"
+           AND cp."threadId" = :threadId
+           AND c."userId" = :userId
+           AND sp."currentStep" = true`,
+          {
+            replacements: {
+              replied: true,
+              threadId: threadId,
+              userId: token.userId,
+            },
+            type: db.Sequelize.QueryTypes.UPDATE,
+          }
+        );
       }
     }
 
@@ -275,13 +275,13 @@ class Gmail {
     res.status(200).send();
   };
 
-  static addToQueue = async (encodedEmails, userId, stepProspectIds) => {
+  static addToQueue = async (encodedEmails, userId, campaignProspectIds) => {
     let time = 5000;
     const addTime = 5000;
     const token = await this.getToken(userId);
     encodedEmails.forEach((encodedEmail, index) => {
-      const stepProspectId = stepProspectIds[index];
-      const data = { encodedEmail, token, stepProspectId, userId };
+      const campaignProspectId = campaignProspectIds[index];
+      const data = { encodedEmail, token, campaignProspectId, userId };
       const options = {
         delay: time,
       };
@@ -296,7 +296,7 @@ class Gmail {
     userId,
     body,
     subject,
-    stepProspectIds
+    campaignProspectIds
   ) => {
     const gmailAddress = await this.getGmailAddress(userId);
     const from = `${userName} \u003c${gmailAddress}\u003e`;
@@ -311,7 +311,7 @@ class Gmail {
         );
         return encodedEmail;
       });
-      this.addToQueue(encodedEmails, userId, stepProspectIds);
+      this.addToQueue(encodedEmails, userId, campaignProspectIds);
     }
   };
 
@@ -337,8 +337,8 @@ class Gmail {
       })
     );
     const emails = prospects.map((prospect) => prospect.email);
-    const stepProspectIds = stepProspects.map(
-      (stepProspect) => stepProspect.stepId
+    const campaignProspectIds = stepProspects.map(
+      (stepProspect) => stepProspect.campaignProspectId
     );
     const socketObj = {
       open: true,
@@ -352,13 +352,14 @@ class Gmail {
     const userId = req.currentUser.id;
     const body = step.body;
     const subject = step.subject;
+    console.log("Emails", emails, "\n\n\n");
     this.createEmailsAndAddToQueue(
       emails,
       userName,
       userId,
       body,
       subject,
-      stepProspectIds
+      campaignProspectIds
     );
     return res.send("ok");
   };
@@ -370,7 +371,7 @@ EmailQueue.process(async (job, done) => {
   const threadId = sentMail.data.threadId;
   const StepProspect = await db.StepProspect.findOne({
     where: {
-      stepId: job.data.stepProspectId,
+      campaignProspectId: job.data.campaignProspectId,
     },
   });
   StepProspect.contacted = true;
@@ -381,7 +382,7 @@ EmailQueue.process(async (job, done) => {
   );
   const CampaignProspect = await db.CampaignProspect.findOne({
     where: {
-      id: StepProspect.campaignProspectId,
+      id: job.data.campaignProspectId,
     },
   });
   CampaignProspect.threadId = threadId;
