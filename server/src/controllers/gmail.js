@@ -84,7 +84,8 @@ class Gmail {
             "CATEGORY_FORUMS",
           ],
           labelFilterAction: "exclude",
-          topicName: "projects/quickstart-1591716148538/topics/emailResponse",
+          topicName:
+            "projects/quickstart-1591716148538/topics/receiveEmailResponse",
         },
       });
 
@@ -128,7 +129,13 @@ class Gmail {
       });
       if (!token) throw new Error("No token found!");
       const returnToken = JSON.parse(JSON.stringify(token));
-      return returnToken;
+      return {
+        access_token: returnToken.access_token,
+        refresh_token: returnToken.refresh_token,
+        scope: returnToken.scope,
+        token_type: returnToken.token_type,
+        expiry_date: returnToken.expiry_date,
+      };
     } catch (error) {
       console.log("Error authorizing Gmail Client\n", error);
       Promise.reject(error.message);
@@ -157,20 +164,22 @@ class Gmail {
       });
       return sent;
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       Promise.reject(err.message);
     }
   };
+
   // Gmail notifications webhook action
   static emailResponse = async (req, res) => {
     const buffer = new Buffer(req.body.message.data, "base64");
     const messageData = JSON.parse(buffer.toString("utf8"));
-
+    console.log(messageData);
     const token = await db.Token.findOne({
       where: {
         googleEmailAddress: messageData.emailAddress,
       },
     });
+    console.log("START HISTORY FROM : ", token.gmailStartHistoryId);
 
     let oAuthClient = this.get_oAuthClient();
 
@@ -189,7 +198,7 @@ class Gmail {
 
     const gmailHistoryResponse = await gmail.users.history.list({
       userId: "me",
-      startHistoryId: token.gmailStartHistoryId,
+      startHistoryId: 11524,
     });
 
     let historyData = gmailHistoryResponse.data.history;
@@ -198,30 +207,39 @@ class Gmail {
       const latestHistory = historyData[historyData.length - 1];
 
       console.dir(latestHistory, { depth: null, colors: true });
-
       if (Array.isArray(latestHistory.messagesAdded)) {
+        console.log("Found latest history");
+
         const threadId = latestHistory.messages[0].threadId;
         console.log(threadId);
 
         // Update step prospect replied to true that are associated to that threadId
-        await db.sequelize.query(
-          `UPDATE "StepProspects" AS sp SET "replied" = :replied
-           FROM "CampaignProspects" AS cp
-           JOIN "Campaigns" as c
-           ON cp."campaignId" = c."id"
-           WHERE sp."campaignProspectId" = cp."id"
-           AND cp."threadId" = :threadId
-           AND c."userId" = :userId
-           AND sp."currentStep" = true`,
-          {
-            replacements: {
-              replied: true,
-              threadId: threadId,
-              userId: token.userId,
-            },
-            type: db.Sequelize.QueryTypes.UPDATE,
-          }
-        );
+        const cp = await db.CampaignProspect.findOne({ where: { threadId } });
+        if (cp) {
+          const sp = await db.StepProspect.findOne({
+            where: { campaignProspectId: cp.id },
+          });
+          sp.replied = true;
+          sp.save();
+        }
+        // await db.sequelize.query(
+        //   `UPDATE "StepProspects" AS sp SET "replied" = :replied
+        //    FROM "CampaignProspects" AS cp
+        //    JOIN "Campaigns" as c
+        //    ON cp."campaignId" = c."id"
+        //    WHERE sp."campaignProspectId" = cp."id"
+        //    AND cp."threadId" = :threadId
+        //    AND c."userId" = :userId
+        //    AND sp."currentStep" = true`,
+        //   {
+        //     replacements: {
+        //       replied: true,
+        //       threadId: threadId,
+        //       userId: token.userId,
+        //     },
+        //     type: db.Sequelize.QueryTypes.UPDATE,
+        //   }
+        // );
       }
     }
 
@@ -261,15 +279,14 @@ class Gmail {
     let time = 5000;
     const addTime = 5000;
     const token = await this.getToken(userId);
-    encodedEmails.forEach(async (endodedEmail, index) => {
+    encodedEmails.forEach((encodedEmail, index) => {
       const stepProspectId = stepProspectIds[index];
-      const data = { endodedEmail, token, stepProspectId, userId };
+      const data = { encodedEmail, token, stepProspectId, userId };
       const options = {
         delay: time,
-        attempts: 1,
       };
       time = time + addTime;
-      await EmailQueue.add(data, options);
+      EmailQueue.add(data, options);
     });
   };
 
@@ -299,7 +316,6 @@ class Gmail {
   };
 
   static sendEmailRoute = async (req, res) => {
-    console.log(`\n\n\n---------------\n${req.body}\n\n\n`);
     const stepId = req.body.id;
     const step = await db.Step.findOne({ where: { id: stepId } });
     const stepProspects = await db.StepProspect.findAll({ where: { stepId } });
@@ -331,7 +347,7 @@ class Gmail {
       newQueue: true,
     };
     Cache.setSocketObj(req.currentUser.id, socketObj);
-    console.log(emails);
+    console.log("CurrentUser ", req.currentUser.id, "Obj ", socketObj);
     const userName = `${req.currentUser.firstName} ${req.currentUser.lastName}`;
     const userId = req.currentUser.id;
     const body = step.body;
@@ -344,45 +360,50 @@ class Gmail {
       subject,
       stepProspectIds
     );
-    res.send("ok");
+    return res.send("ok");
   };
 }
 
 EmailQueue.process(async (job, done) => {
   console.log("Job found!");
-  const sentMail = await Gmail.sendEmail(job.data.endodedEmail, job.data.token);
+  const sentMail = await Gmail.sendEmail(job.data.encodedEmail, job.data.token);
   const threadId = sentMail.data.threadId;
   const StepProspect = await db.StepProspect.findOne({
-    where: { stepId: job.data.stepProspectId },
+    where: {
+      stepId: job.data.stepProspectId,
+    },
   });
   StepProspect.contacted = true;
   await StepProspect.save();
+  console.log(
+    "Step prospect updated: ",
+    JSON.parse(JSON.stringify(StepProspect))
+  );
   const CampaignProspect = await db.CampaignProspect.findOne({
-    where: { id: StepProspect.campaignProspectId },
+    where: {
+      id: StepProspect.campaignProspectId,
+    },
   });
   CampaignProspect.threadId = threadId;
-  CampaignProspect.save();
+  console.log(
+    "Campaign prospect updated",
+    JSON.parse(JSON.stringify(CampaignProspect))
+  );
+  await CampaignProspect.save();
+  console.log("New Thread: ", threadId);
   const io = Socket.getInstance();
   const obj = Cache.getSocketObj(job.data.userId);
-  console.log("Cache Obj", obj);
   obj.sent += 1;
   Cache.setSocketObj(job.data.userId, obj);
+  io.to(job.data.userId).emit("sendEmail", obj);
   io.to(job.data.userId).emit("update", true);
-  io.to(job.data.userId).emit("send email", obj);
+  if (obj.sent === obj.total) {
+    Cache.deleteSocketObj(job.data.userId);
+  }
   done();
 });
 
-EmailQueue.on("error", (job, result) => {
-  job.remove();
-});
-
-EmailQueue.on("failed", (job, result) => {
-  Cache.deleteSocketObj(job.data.userId);
-  job.remove();
-});
-
 EmailQueue.on("completed", (job, result) => {
-  Cache.clearObj();
   job.remove();
 });
 

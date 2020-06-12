@@ -100,8 +100,8 @@ const SummaryPage = ({ user, socket }) => {
       newData.contacted = parseInt(0);
       newData.replied = parseInt(0);
       newData.Steps.forEach((step) => {
-        newData.contacted += parseInt(step.contactedProspects);
-        newData.replied += parseInt(step.repliedProspects);
+        newData.contacted += parseInt(step.contactedCount);
+        newData.replied += parseInt(step.repliedCount);
       });
       setCampaignInfo(newData);
     });
@@ -176,8 +176,8 @@ const SummaryPage = ({ user, socket }) => {
             id,
             subject,
             order,
-            contactedProspects,
-            repliedProspects,
+            contactedCount,
+            repliedCount,
             prospectCount,
           }) => (
             <Step
@@ -196,11 +196,11 @@ const SummaryPage = ({ user, socket }) => {
               data={[
                 {
                   label: "Contacted",
-                  value: contactedProspects,
+                  value: contactedCount,
                 },
                 {
                   label: "Replied",
-                  value: repliedProspects,
+                  value: repliedCount,
                 },
                 {
                   label: "Prospect",

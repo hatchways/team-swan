@@ -27,7 +27,7 @@ const SentMailSnackBar = ({ socket }) => {
   const [message, setMessage] = React.useState(null);
 
   if (socket) {
-    socket.on("send email", (message) => {
+    socket.on("sendEmail", (message) => {
       setMessage(message);
       if (!open) {
         setOpen(true);
