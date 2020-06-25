@@ -1,7 +1,7 @@
 class Mail {
   static encodeEmail(to, from, subject, message) {
     var str = [
-      'Content-Type: text/plain; charset="UTF-8"\n',
+      'Content-Type: text/html; charset="UTF-8"\n',
       "MIME-Version: 1.0\n",
       "Content-Transfer-Encoding: 7bit\n",
       "to: ",
@@ -16,7 +16,7 @@ class Mail {
       message,
     ].join("");
 
-    var encodedMail = new Buffer(str)
+    var encodedMail = Buffer.from(str)
       .toString("base64")
       .replace(/\+/g, "-")
       .replace(/\//g, "_");

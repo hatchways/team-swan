@@ -4,7 +4,7 @@
  * If there is no currentUser assigned this middleware would throw a new ForbiddenPathError to the user
  * Simply add the middleware to route and it would authenticate if a user is signed in or not
  */
-const NotLoggedInError = require('../errors/no-logged-in-user')
+const NotLoggedInError = require("../errors/no-logged-in-user");
 const ForbiddenPathError = require("../errors/forbidden-path-error"); //Throws new Forbidden path error
 const jwt = require("jsonwebtoken");
 
@@ -18,7 +18,15 @@ const requireAuth = (req, res, next) => {
   try {
     // Try to check if the jwt has been tampered with or not
     // If not tampered with then assign currentUser property to request or 'req' object
+    if (!req.session.jwt) {
+      throw new ForbiddenPathError();
+    }
     const payload = jwt.verify(req.session.jwt, process.env.JWT_KEY);
+    const socket = req.app.get("socket");
+    if (socket) {
+      socket.join(payload.id);
+      req.socket = socket;
+    }
     req.currentUser = payload;
   } catch (err) {
     // If there is any errors validating the JWT log them to the console

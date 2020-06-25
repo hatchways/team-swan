@@ -1,10 +1,12 @@
 import React, { useState, createContext } from "react";
 import axios from "axios";
+import socketIOClient from "socket.io-client";
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({});
+  const [socket, setSocket] = useState(null);
 
   const logout = () => {
     axios.post("/api/signout").then((response) => {
@@ -25,6 +27,8 @@ const AuthProvider = ({ children }) => {
           user.hasGmailAuthorized !== userData.hasGmailAuthorized
         ) {
           setUser(userData);
+          const socketInfo = socketIOClient("/");
+          setSocket(socketInfo);
         }
       })
       .catch((error) => {
@@ -35,7 +39,9 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, validateAuthCookie, logout }}>
+    <AuthContext.Provider
+      value={{ user, setUser, validateAuthCookie, logout, socket }}
+    >
       {children}
     </AuthContext.Provider>
   );

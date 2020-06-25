@@ -83,6 +83,7 @@ const StepEditorDialog = ({ open, onClose, type, campaignId, order, id }) => {
           onClose();
         });
     } else {
+      setIsDataLoading(false);
       setSubject("");
       setBodyHtmlContent("");
       setIsDataLoading(false);

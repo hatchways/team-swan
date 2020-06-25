@@ -4,7 +4,6 @@ module.exports = (sequelize, DataTypes) => {
     campaignProspectId: {
       allowNull: false,
       type: DataTypes.INTEGER,
-      primaryKey: true,
       onDelete: "CASCADE",
       references: {
         model: "CampaignProspects",

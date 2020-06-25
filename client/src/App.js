@@ -19,10 +19,12 @@ import {
 } from "constants/routes";
 import ImportProspects from "./pages/importProspects";
 import AuthRoute from "pages/gmailAuth/AuthRoute";
+import SentMailSnackBar from "pages/sentmailsnackbar";
 
-function App({ isAuthenticated }) {
+function App({ socket, isAuthenticated, user }) {
   return (
-    <MainLayout>
+    <MainLayout user={user}>
+      <SentMailSnackBar socket={socket} />
       <Switch>
         <Route path="/gmailauth" component={AuthRoute}></Route>
         <Route path={importProspects} component={ImportProspects} />
@@ -31,7 +33,6 @@ function App({ isAuthenticated }) {
         <Route path={campaigns} component={Campaigns} />
         <Route path={reporting} component={Reporting} />
         <Route path={templates} component={Templates} />
-
         <Route
           path="/login"
           render={(props) =>
@@ -44,8 +45,8 @@ function App({ isAuthenticated }) {
             isAuthenticated ? (
               <Redirect to={campaigns} />
             ) : (
-                <Signup {...props} />
-              )
+              <Signup {...props} />
+            )
           }
         />
       </Switch>

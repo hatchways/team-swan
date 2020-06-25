@@ -43,7 +43,6 @@ const Navlinks = () => {
   useEffect(() => {
     const splitPathName = location.pathname.split("/");
     const rootPathName = splitPathName[1];
-    console.log(rootPathName);
 
     if (
       ["campaigns", "prospects", "templates", "reporting"].includes(

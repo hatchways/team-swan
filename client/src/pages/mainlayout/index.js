@@ -3,12 +3,14 @@ import { CssBaseline } from "@material-ui/core";
 import Navbar from "./Navbar";
 import Gmail from "pages/gmailAuth/Gmail";
 
-const MainLayout = ({ children }) => {
+const MainLayout = ({ children, user }) => {
   return (
     <>
       <CssBaseline />
       <Navbar />
-      <Gmail></Gmail>
+      {user && !user.hasGmailAuthorized && (
+        <Gmail isOpen={!user.hasGmailAuthorized} onClose={() => {}}></Gmail>
+      )}
       {children}
     </>
   );

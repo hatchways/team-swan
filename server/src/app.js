@@ -6,6 +6,9 @@ const logger = require("morgan");
 require("express-async-errors");
 const errorHandler = require("./middleware/error-handler");
 const cookieSession = require("cookie-session");
+const http = require("http");
+const Cache = require("./utils/cache");
+const path = require("path");
 
 const userAuthRoute = require("./routes/user-auth");
 const uploadRoute = require("./routes/upload-routes");
@@ -16,6 +19,14 @@ const gmailAuthRoute = require("./routes/gmail");
 const { json, urlencoded } = express;
 
 var app = express();
+const io = require("./utils/socketmanager");
+app.io = io.Initialize();
+
+app.io.on("connect", (socket) => {
+  console.log("user connected!");
+  socket.emit("welcome", { message: "Hello world this is the server" });
+  app.set("socket", socket);
+});
 
 app.use(logger("dev"));
 app.use(json());
@@ -27,9 +38,9 @@ app.use(
     secure: false,
   })
 );
-app.use(express.static(join(__dirname, "public")));
 
 // User routes
+// app.use(express.static(path.join(__dirname, "..", "/build")));
 app.use(userAuthRoute);
 app.use(uploadRoute);
 app.use(prospectsRoute);
